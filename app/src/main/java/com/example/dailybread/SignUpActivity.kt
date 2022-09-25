@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.dailybread.compose.DBButton
 import com.example.dailybread.compose.DBLogo
 import com.example.dailybread.compose.DBTextField
 import com.example.dailybread.ui.theme.DailyBreadTheme
@@ -53,7 +55,7 @@ class SignUpActivity : ComponentActivity() {
                     }
 
                     Card(
-
+                        shape = RoundedCornerShape(5),
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .padding(vertical = 20.dp, horizontal = 20.dp)
@@ -62,17 +64,12 @@ class SignUpActivity : ComponentActivity() {
                             .size(380.dp)
 //                            .height(380.dp)
 //                            .width(315.dp)
-                            .background(Color.White)
-                            .clip(RoundedCornerShape(5))
+                           // .background(Color.White)
+                           // .clip(RoundedCornerShape(5))
 
 
                     ) {
 
-//                        Card(modifier = Modifier
-//                            .align(Alignment.BottomCenter)
-//                            .height(380.dp)
-//                            .width(315.dp)
-//                            .background(Color.White)){}
 
                     }
                     Column(Modifier.align(Alignment.BottomCenter)) {
@@ -117,6 +114,7 @@ class SignUpActivity : ComponentActivity() {
                             passwordTextState
                         )
                         DBButton(ToastText = "Account Created", btnText = "Register",context = this@SignUpActivity)
+
                     }
 
                 }
@@ -125,36 +123,6 @@ class SignUpActivity : ComponentActivity() {
     }
 }
 
-
-
-@Composable
-fun DBButton(ToastText: String, btnText: String, context: Context) {
-    Box(Modifier
-        .absolutePadding(80.dp, 10.dp, 20.dp, 40.dp)) {
-        Button(onClick = { Toast.makeText(context, ToastText, Toast.LENGTH_SHORT).show() },
-            shape = RoundedCornerShape(50),
-            colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
-            modifier = Modifier
-                .width(120.dp)
-                .height(50.dp)
-        ) {
-            Text(text = btnText, modifier = Modifier, color = Color.White, fontSize = 15.sp)
-        }
-    }
-
-}
-
-@Composable
-fun MyTopAppBar(){
-    TopAppBar(
-        title = { Text("DailyBread")},
-        backgroundColor = Color(0xFFFDAF01),
-        contentColor = Color.Yellow
-    )
-    //use this function to make the top bar on main page activity:
-    //    Scaffold(topBar = { MyTopAppBar() }) {}
-
-}
 
 @Preview(showBackground = true)
 @Composable
