@@ -53,99 +53,6 @@ import com.example.dailybread.R
 import com.example.dailybread.data.InventoryItem
 import com.example.dailybread.data.mockItems
 
-
-@Composable
-fun DBTextField(label: String, keyboardOptions: KeyboardOptions, textState: MutableState<TextFieldValue>) {
-    Column(Modifier.padding(5.dp)) {
-        OutlinedTextField(
-            shape = RoundedCornerShape(20),
-            value = textState.value,
-            singleLine = true,
-            keyboardOptions = keyboardOptions,
-            label = { Text(text = label) },
-            onValueChange = { textState.value = it }
-        )
-
-    }
-}
-
-@Composable
-fun DBLogo(name: String) {
-    Button(
-        onClick = { },
-        shape = RoundedCornerShape(50),
-        colors = ButtonDefaults.textButtonColors(
-            backgroundColor = Color(0xFFFDAF01)
-        ),
-
-        modifier = Modifier
-            .width(300.dp)
-            .height(140.dp)
-
-
-    ) {
-        Text(text = name, modifier = Modifier, color = Color.White, fontSize = 50.sp)
-
-    }
-}
-
-@Composable
-fun DBButton(ToastText: String, btnText: String, context: Context) {
-    Box(Modifier
-       // .absolutePadding(80.dp, 10.dp, 20.dp, 40.dp)
-   ) {
-
-        Button(onClick = { Toast.makeText(context, ToastText, Toast.LENGTH_SHORT).show() },
-            shape = RoundedCornerShape(50),
-            colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
-            modifier = Modifier
-                .width(120.dp)
-                .height(50.dp)
-        ) {
-            Text(text = btnText, modifier = Modifier, color = Color.White, fontSize = 15.sp)
-        }
-   }
-
-}
-
-@Composable
-fun MyTopAppBar(){
-    CenterAlignedTopAppBar(
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors( colorResource(R
-            .color.DByellow)),
-        navigationIcon =  {
-            IconButton(onClick = { }) {
-                Icon(imageVector = Icons.Filled.Menu, contentDescription = "", tint = Color.White)
-
-            }
-        },
-        title = {
-            Text("DailyBread", textAlign = TextAlign.Center, modifier = Modifier, color = Color.White
-            )},
-
-       // backgroundColor = Color(0xFFFDAF01),
-       // contentColor = Color.White
-
-    )
-}
-
-@Composable
-fun MyAppNavHost(
-    modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController(),
-    startDestination: String = "home"
-) {
-    NavHost(
-        modifier = modifier,
-        navController = navController,
-        startDestination = startDestination
-    ) {
-        composable("home") {
-            HomeScreen()
-        }
-        composable("signup") { SignUpScreen() }
-    }
-}
 @Composable
 fun HomeScreen(){
     Scaffold(topBar = { MyTopAppBar() }) {
@@ -357,6 +264,6 @@ fun InventoryScreen(inventoryItems: List<InventoryItem> = mockItems){
 }
 
 @Composable
-fun MultiFloatingActionButton() {
+fun EditInventoryScreen(){
 
 }
