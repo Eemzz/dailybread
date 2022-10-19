@@ -1,5 +1,6 @@
 package com.example.dailybread
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -7,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.dailybread.compose.InventoryScreen
 import com.example.dailybread.ui.theme.DailyBreadTheme
+import java.lang.Class
 
 class InventoryActivity: ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,6 +16,7 @@ class InventoryActivity: ComponentActivity(){
         setContent {
             DailyBreadTheme {
                 InventoryScreen()
+
             }
         }
     }

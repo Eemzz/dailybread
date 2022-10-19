@@ -22,5 +22,11 @@ fun MyAppNavHost(
             HomeScreen()
         }
         composable("signup") { SignUpScreen() }
+        composable("inv") {
+            InventoryScreen()
+        }
+        composable("edit") {
+
+            EditInventoryScreen() }
     }
 }

@@ -1,10 +1,7 @@
 package com.example.dailybread.data
 
-class Inventory {
-    var ingList = arrayListOf<String>()
-    public fun addIng(newIng:String){
-        ingList.add(newIng)
-    }
+class Inventory(ingList: List<InventoryItem>) {
+
 }
 val mockSpiceInventory = listOf(
     Ingredient("Salt", "1 LB"),
@@ -14,6 +11,13 @@ val mockVegiInventory = listOf(
     Ingredient("Tomatoes", "3"),
     Ingredient("Cucumbers", "3"),
     Ingredient("Carrots", "3"),
+    Ingredient("Bell Pepper", "6"),
+    Ingredient("Lettuce", "2"),
+    Ingredient("Onion", "3"),
+    Ingredient("Potatoes", "4"),
+    Ingredient("Garlic", "1"),
+    Ingredient("Mushrooms", "6"),
+
 )
 val mockProteinInventory = listOf(
     Ingredient("Chicken Breast", "3 LB"),
@@ -22,5 +26,11 @@ val mockProteinInventory = listOf(
 val mockInventorySpiceItem =  InventoryItem("Spice", mockSpiceInventory)
 val mockInventoryVegiItem =  InventoryItem("Vegetables", mockVegiInventory)
 val mockInventoryProteinItem =  InventoryItem("Protein", mockProteinInventory)
-val mockItems = listOf(mockInventorySpiceItem, mockInventoryVegiItem, mockInventoryProteinItem)
-data class InventoryItem(val title: String, val items: List<Ingredient>)
+val mockItems = mutableListOf(mockInventorySpiceItem, mockInventoryVegiItem,
+    mockInventoryProteinItem)
+
+
+
+data class InventoryItem(val title: String, val items: List<Ingredient>){
+
+}

@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import com.example.dailybread.compose.DBButton
 import com.example.dailybread.compose.DBLogo
 import com.example.dailybread.compose.DBTextField
+import com.example.dailybread.compose.SignUpScreen
 import com.example.dailybread.ui.theme.DailyBreadTheme
 
 class SignUpActivity : ComponentActivity() {
@@ -38,86 +39,7 @@ class SignUpActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             DailyBreadTheme {
-
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Image(
-                        painter = painterResource(id = R.drawable.appbg1),
-                        contentDescription = "image",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .rotate(180f),
-                        contentScale = ContentScale.FillBounds
-                    )
-                    Box(modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .absolutePadding(0.dp, 20.dp, 0.dp, 0.dp)){
-                        DBLogo(name = "DailyBread")
-                    }
-
-                    Card(
-                        shape = RoundedCornerShape(5),
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(vertical = 20.dp, horizontal = 20.dp)
-//                            .paddingFromBaseline(0.dp, 390.dp)
-                            .alpha(0.75f)
-                            .size(380.dp)
-//                            .height(380.dp)
-//                            .width(315.dp)
-                           // .background(Color.White)
-                           // .clip(RoundedCornerShape(5))
-
-
-                    ) {
-
-
-                    }
-                    Column(Modifier.align(Alignment.BottomCenter)) {
-                        val nameTextState = remember { mutableStateOf(TextFieldValue()) }
-                        val emailTextState = remember { mutableStateOf(TextFieldValue()) }
-                        val confirmTextState = remember { mutableStateOf(TextFieldValue()) }
-                        val passwordTextState = remember { mutableStateOf(TextFieldValue()) }
-                        DBTextField(
-                            "Enter Your Name",
-                            KeyboardOptions(
-                                autoCorrect = false,
-                                keyboardType = KeyboardType.Text,
-                                imeAction = ImeAction.Next
-                            ),
-                            nameTextState
-                        )
-                        DBTextField(
-                            "Enter Your Email",
-                            KeyboardOptions(
-                                autoCorrect = false,
-                                keyboardType = KeyboardType.Email,
-                                imeAction = ImeAction.Next
-                            ),
-                            emailTextState
-                        )
-                        DBTextField(
-                            "Enter Your Password",
-                            KeyboardOptions(
-                                autoCorrect = false,
-                                keyboardType = KeyboardType.Password,
-                                imeAction = ImeAction.Next
-                            ),
-                            confirmTextState
-                        )
-                        DBTextField(
-                            "Renter Your Password",
-                            KeyboardOptions(
-                                autoCorrect = false,
-                                keyboardType = KeyboardType.Password,
-                                imeAction = ImeAction.Next
-                            ),
-                            passwordTextState
-                        )
-                        DBButton(ToastText = "Account Created", btnText = "Register",context = this@SignUpActivity)
-
-                    }
-
-                }
+                SignUpScreen()
             }
         }
     }

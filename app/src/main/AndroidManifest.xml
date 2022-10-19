@@ -40,6 +40,11 @@
             android:exported="true"
             android:label="DailyBread Inventory"
             android:theme="@style/Theme.DailyBread"/>
+        <activity
+            android:name="com.example.dailybread.EditInventoryActivity"
+            android:exported="true"
+            android:label="DailyBread Inventory"
+            android:theme="@style/Theme.DailyBread"/>
     </application>
 
 </manifest>
