@@ -43,7 +43,12 @@
         <activity
             android:name="com.example.dailybread.EditInventoryActivity"
             android:exported="true"
-            android:label="DailyBread Inventory"
+            android:label="DailyBread Edit Inventory"
+            android:theme="@style/Theme.DailyBread"/>
+        <activity
+            android:name="com.example.dailybread.RecipeActivity"
+            android:exported="true"
+            android:label="DailyBread Recipe"
             android:theme="@style/Theme.DailyBread"/>
     </application>
 

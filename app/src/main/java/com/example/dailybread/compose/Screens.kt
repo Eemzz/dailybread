@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -35,9 +36,7 @@ import androidx.core.content.ContextCompat.startActivity
 import com.example.dailybread.EditInventoryActivity
 import com.example.dailybread.InventoryActivity
 import com.example.dailybread.R
-import com.example.dailybread.data.Ingredient
-import com.example.dailybread.data.InventoryItem
-import com.example.dailybread.data.mockItems
+import com.example.dailybread.data.*
 
 
 @Composable
@@ -57,12 +56,12 @@ fun HomeScreen(){
                 item {
                     Column(Modifier.fillMaxSize(),horizontalAlignment = Alignment
                     .CenterHorizontally) {
-                        Card( shape = RoundedCornerShape(10),modifier = Modifier
-                            // .align(Alignment.TopCenter)
-                            .size(300.dp, 250.dp)
-                            .padding(vertical = 20.dp)
-                            .alpha(0.75f)
-                            .background(Color.Transparent)){
+                        Card( backgroundColor = Color.White.copy(alpha = 0.75f), shape =
+                        RoundedCornerShape(10),modifier =
+                        Modifier
+                            .padding(20.dp)
+                            .fillMaxSize()
+                            ){
 
 
 
@@ -84,7 +83,7 @@ fun HomeScreen(){
                                         ingListTextState
                                     )
                                 }
-                                Column(Modifier.padding(top = 10.dp)) {
+                                Column(Modifier.padding(top =10.dp, bottom = 20.dp)) {
                                     DBButton(
                                         ToastText = "Looking for recipes",
                                         btnText =
@@ -97,12 +96,12 @@ fun HomeScreen(){
 
 
                         }
-                        Card( shape = RoundedCornerShape(10),modifier = Modifier
-                            // .align(Alignment.BottomCenter)
-                            .width(300.dp)
-                            // .padding(vertical = 20.dp)
-                            .alpha(0.75f)
-                            .background(Color.Transparent)){
+                        Card( backgroundColor = Color.White.copy(alpha = 0.75f), shape =
+                        RoundedCornerShape(10),modifier =
+                        Modifier
+                            .padding(20.dp)
+                            .fillMaxSize()
+                        ){
                             Column(Modifier.padding(20.dp),horizontalAlignment =
                             Alignment
                                 .CenterHorizontally
@@ -119,7 +118,7 @@ fun HomeScreen(){
                                 ) {
 
 
-                                    Text(text = "Generates A Recipe From Your Inventory",
+                                    Text(text = "Generates a recipe from your inventory",
                                         fontSize = 14
                                             .sp, color =
                                         Color
@@ -129,22 +128,21 @@ fun HomeScreen(){
                             }
 
                         }
-
-                        Card(shape = RoundedCornerShape(20),modifier = Modifier
-
-                            .size(300.dp, 100.dp)
-                            .padding(vertical = 20.dp)
-                            .alpha(0.75f)
+                        Card(backgroundColor = Color.White.copy(alpha = 0.75f), shape =
+                        RoundedCornerShape(20),modifier =
+                        Modifier
+                            .padding(20.dp)
+                            .fillMaxSize()
                             .clickable {
                                 val intent =
                                     Intent(context, InventoryActivity::class.java)
                                 startActivity(context, intent, null)
                             }
-                            .background(Color.Transparent)) {
+                            ) {
                             Column(Modifier.padding(vertical = 20.dp),horizontalAlignment =
                             Alignment
                                 .CenterHorizontally) {
-                                Text("View Inventory" , color = Color.DarkGray)
+                                Text("View Inventory" , color = Color.DarkGray, fontSize = 25.sp)
                             }
 
                         }
@@ -173,93 +171,99 @@ fun SignUpScreen() {
             contentScale = ContentScale.FillBounds
         )
 
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(top = 20.dp),horizontalAlignment = Alignment
-            .CenterHorizontally){
-                DBLogo(name = "DailyBread")
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .align(CenterHorizontally)){
-                Card(
-                    shape = RoundedCornerShape(5),
-                    modifier = Modifier
-                        .padding(vertical = 20.dp, horizontal = 20.dp)
-                        .alpha(0.75f)
-                        // .size(380.dp, 300.dp)
-                        .align(CenterHorizontally)
-                ) {
-                    Column(horizontalAlignment = CenterHorizontally) {
-                            Column(Modifier.padding(vertical = 20.dp, horizontal = 20.dp)) {
-                            val nameTextState = remember { mutableStateOf(TextFieldValue()) }
-                            val emailTextState = remember { mutableStateOf(TextFieldValue()) }
-                            val confirmTextState = remember { mutableStateOf(TextFieldValue()) }
-                            val passwordTextState = remember { mutableStateOf(TextFieldValue()) }
-                            DBTextField(
-                                "Enter Your Name",
-                                KeyboardOptions(
-                                    autoCorrect = false,
-                                    keyboardType = KeyboardType.Text,
-                                    imeAction = ImeAction.Next
-                                ),
-                                nameTextState
-                            )
-                            DBTextField(
-                                "Enter Your Email",
-                                KeyboardOptions(
-                                    autoCorrect = false,
-                                    keyboardType = KeyboardType.Email,
-                                    imeAction = ImeAction.Next
-                                ),
-                                emailTextState
-                            )
-                            DBTextField(
-                                "Enter Your Password",
-                                KeyboardOptions(
-                                    autoCorrect = false,
-                                    keyboardType = KeyboardType.Password,
-                                    imeAction = ImeAction.Next
-                                ),
-                                confirmTextState
-                            )
-                            DBTextField(
-                                "Renter Your Password",
-                                KeyboardOptions(
-                                    autoCorrect = false,
-                                    keyboardType = KeyboardType.Password,
-                                    imeAction = ImeAction.Next
-                                ),
-                                passwordTextState
-                            )
+        LazyColumn(){
+            item{
+                Column(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(top = 20.dp),horizontalAlignment = Alignment
+                        .CenterHorizontally){
+                    DBLogo(name = "DailyBread")
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .align(CenterHorizontally)){
+                        Card(backgroundColor = Color.White.copy(alpha = 0.75f),
+                            shape = RoundedCornerShape(5),
+                            modifier = Modifier
+                                .padding(20.dp)
+                                .align(CenterHorizontally)
+                        ) {
+                            Column(horizontalAlignment = CenterHorizontally) {
+                                Column(Modifier.padding(20.dp)) {
+                                    val nameTextState = remember { mutableStateOf(TextFieldValue()) }
+                                    val emailTextState = remember { mutableStateOf(TextFieldValue()) }
+                                    val confirmTextState = remember { mutableStateOf(TextFieldValue()) }
+                                    val passwordTextState = remember { mutableStateOf(TextFieldValue()) }
+                                    DBTextField(
+                                        "Enter Your Name",
+                                        KeyboardOptions(
+                                            autoCorrect = false,
+                                            keyboardType = KeyboardType.Text,
+                                            imeAction = ImeAction.Next
+                                        ),
+                                        nameTextState
+                                    )
+                                    DBTextField(
+                                        "Enter Your Email",
+                                        KeyboardOptions(
+                                            autoCorrect = false,
+                                            keyboardType = KeyboardType.Email,
+                                            imeAction = ImeAction.Next
+                                        ),
+                                        emailTextState
+                                    )
+                                    DBTextField(
+                                        "Enter Your Password",
+                                        KeyboardOptions(
+                                            autoCorrect = false,
+                                            keyboardType = KeyboardType.Password,
+                                            imeAction = ImeAction.Next
+                                        ),
+                                        confirmTextState
+                                    )
+                                    DBTextField(
+                                        "Renter Your Password",
+                                        KeyboardOptions(
+                                            autoCorrect = false,
+                                            keyboardType = KeyboardType.Password,
+                                            imeAction = ImeAction.Next
+                                        ),
+                                        passwordTextState
+                                    )
+
+
+                                }
+                                Column(
+                                    Modifier
+                                        .align(CenterHorizontally)
+                                        .padding(bottom = 20.dp)) {
+                                    DBButton(
+                                        ToastText = "Account Created",
+                                        btnText = "Register",
+                                        context = context,
+                                        intent = null
+                                    )
+                                }
+
+
+                            }
+
 
 
                         }
 
 
+
                     }
 
 
-                }
 
-                Column(
-                    Modifier
-                        .align(CenterHorizontally)
-                        .padding(vertical = 10.dp)) {
-                    DBButton(
-                        ToastText = "Account Created",
-                        btnText = "Register",
-                        context = context,
-                        intent = null
-                    )
                 }
 
             }
-
-
-
         }
+
 
 
     }
@@ -311,8 +315,10 @@ fun InventoryScreen(inventoryItems: List<InventoryItem> = mockItems,){
                                         }
                                         item.items.forEach() { ingredient ->
                                             Column() {
-                                                Text(ingredient.name + ", " + ingredient.count, color
-                                                = Color.DarkGray )
+                                                if(ingredient.name != "" ){
+                                                    Text(ingredient.name + ", " + ingredient.count, color
+                                                    = Color.DarkGray )
+                                                }
                                             }
                                         }
 
@@ -397,26 +403,29 @@ fun EditInventoryScreen(inventoryItems: List<InventoryItem> = mockItems){
                                     item.items.forEach() { ingredient ->
                                         Row(Modifier.fillMaxSize(), verticalAlignment =
                                         CenterVertically){
-                                            Text(ingredient.name + ", " + ingredient.count, color
-                                            = Color.DarkGray )
-                                            Row(Modifier.fillMaxSize(),
-                                                horizontalArrangement = Arrangement.End){
-                                                IconButton(onClick = { /*TODO*/ }, Modifier.size
-                                                    (25.dp)
-                                                ) {
-                                                    Icon(Icons.Filled.Add,"", tint = Color.DarkGray )
-                                                }
-                                                IconButton(onClick = { /*TODO*/ }, Modifier.size
-                                                    (25.dp)
-                                                ) {
-                                                    Icon(Icons.Filled.Remove,"",tint = Color.DarkGray)
-                                                }
-                                                IconButton(onClick = { /*TODO*/ }, Modifier.size
-                                                    (25.dp)
-                                                ) {
-                                                    Icon(Icons.Filled.Delete,"", tint = Color.DarkGray)
+                                            if(ingredient.name != "" ){
+                                                Text(ingredient.name + ", " + ingredient.count, color
+                                                = Color.DarkGray )
+                                                Row(Modifier.fillMaxSize(),
+                                                    horizontalArrangement = Arrangement.End){
+                                                    IconButton(onClick = { /*TODO*/ }, Modifier.size
+                                                        (25.dp)
+                                                    ) {
+                                                        Icon(Icons.Filled.Add,"", tint = Color.DarkGray )
+                                                    }
+                                                    IconButton(onClick = { /*TODO*/ }, Modifier.size
+                                                        (25.dp)
+                                                    ) {
+                                                        Icon(Icons.Filled.Remove,"",tint = Color.DarkGray)
+                                                    }
+                                                    IconButton(onClick = { /*TODO*/ }, Modifier.size
+                                                        (25.dp)
+                                                    ) {
+                                                        Icon(Icons.Filled.Delete,"", tint = Color.DarkGray)
+                                                    }
                                                 }
                                             }
+
 
                                         }
                                     }
@@ -438,7 +447,11 @@ fun EditInventoryScreen(inventoryItems: List<InventoryItem> = mockItems){
             }
             if (openDialog.value){
 
-                Card(Modifier.align(Center).fillMaxSize().alpha(0.7f),backgroundColor = Color.White,
+                Card(
+                    Modifier
+                        .align(Center)
+                        .fillMaxSize()
+                        .alpha(0.7f),backgroundColor = Color.White,
                     elevation =
                     0.dp){}
                     Card(
@@ -469,7 +482,9 @@ fun EditInventoryScreen(inventoryItems: List<InventoryItem> = mockItems){
                                 val intent = Intent(context, EditInventoryActivity::class.java)
                                 startActivity(context, intent, null)
 
-                                val ingList = listOf<Ingredient>()
+                               // val ingList = listOf<Ingredient>()
+                                val ing = Ingredient("", "");
+                                val ingList = listOf<Ingredient>(ing)
                                 val newInventoryItem: InventoryItem = InventoryItem(NewCategoryTextState.value.text,ingList)
 
 
@@ -504,22 +519,48 @@ fun EditInventoryScreen(inventoryItems: List<InventoryItem> = mockItems){
 
 
 }
-
 @Composable
-fun AddIngPopUp(inventoryItems: List<InventoryItem> = mockItems){
+fun RecipeScreen(recipe: Recipe = spaghetti){
+    val context = LocalContext.current
+    Scaffold(topBar = { MyTopAppBar() }) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .background(Color(0xFFFCF7EC))){
 
-    Card(){
-        val NewIngTypeTextState = remember { mutableStateOf(TextFieldValue()) }
-        DBTextField(
-            "Protein, Vegetables, Fruit, etc",
-            KeyboardOptions(
-                autoCorrect = false,
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
-            ),
-            NewIngTypeTextState
-        )
+            LazyColumn() {
+                item{
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(top = 20.dp),horizontalAlignment = CenterHorizontally) {
+                        Text(text = recipe.name, fontSize = 25.sp, color = Color.DarkGray)
+                    }
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(20.dp)) {
+                        Text(text = "Ingredients",fontSize = 20.sp, color = Color.DarkGray, textAlign = TextAlign.Center)
+                        recipe.ingredients.forEach(){
+                            Text(text = it , color = Color.DarkGray)
+                        }
+//                        Text(text = recipe.ingredients.toString())
+                    }
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(20.dp)) {
+                        Text(text = "Instructions",fontSize = 20.sp, color = Color.DarkGray,
+                            textAlign = TextAlign.Center)
+                        recipe.instructions.forEach(){
+                            Text(text = it , color = Color.DarkGray)
+                        }
+                    }
+                }
+
+            }
+        }
     }
 
-
 }
+

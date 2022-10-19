@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun DBTextField(label: String, keyboardOptions: KeyboardOptions, textState:
 MutableState<TextFieldValue>) {
-    Column(Modifier.padding(bottom = 5.dp)) {
+    Column(Modifier.padding(top = 5.dp)) {
         val keyboardController = LocalSoftwareKeyboardController.current
         OutlinedTextField(
             shape = RoundedCornerShape(20),
