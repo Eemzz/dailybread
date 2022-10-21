@@ -53,7 +53,7 @@ class HomeActivity: ComponentActivity() {
     @Composable
     fun DefaultPreview() {
         DailyBreadTheme {
-//
+
         }
     }
 }
