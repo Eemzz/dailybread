@@ -28,7 +28,7 @@ import com.example.dailybread.R
 
 @Composable
 fun SignUpScreen(navController: NavController) {
-    val context = LocalContext.current
+
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.appbg1),
@@ -98,7 +98,7 @@ fun SignUpScreen(navController: NavController) {
                                         confirmTextState
                                     )
                                     DBTextField(
-                                        "Renter Your Password",
+                                        "Enter Your Password",
                                         KeyboardOptions(
                                             autoCorrect = false,
                                             keyboardType = KeyboardType.Password,

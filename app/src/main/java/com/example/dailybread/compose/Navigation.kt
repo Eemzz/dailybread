@@ -25,6 +25,9 @@ fun MyAppNavHost(
             HomeScreen(navController)
         }
         composable("signup") { SignUpScreen(navController) }
+        composable("login") {
+            LoginScreen(navController)
+        }
         composable("inventory") {
             InventoryScreen(navController)
         }
