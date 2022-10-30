@@ -10,23 +10,32 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun MyAppNavHost(
     modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController(),
-    startDestination: String = "home"
+    navController: NavHostController,
+    startDestination: String = "router"
 ) {
     NavHost(
         modifier = modifier,
         navController = navController,
         startDestination = startDestination
     ) {
-        composable("home") {
-            HomeScreen()
+        composable("router") {
+            RouterScreen(navController)
         }
-        composable("signup") { SignUpScreen() }
-        composable("inv") {
-            InventoryScreen()
+        composable("home") {
+            HomeScreen(navController)
+        }
+        composable("signup") { SignUpScreen(navController) }
+        composable("inventory") {
+            InventoryScreen(navController)
         }
         composable("edit") {
-
-            EditInventoryScreen() }
+            EditInventoryScreen(navController)
+        }
+        composable("account") {
+            AccountScreen(navController)
+        }
+        composable("recipe") {
+            RecipeScreen(navController)
+        }
     }
 }

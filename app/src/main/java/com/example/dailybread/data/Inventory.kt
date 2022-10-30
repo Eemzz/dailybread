@@ -1,13 +1,12 @@
 package com.example.dailybread.data
 
-class Inventory(ingList: List<InventoryItem>) {
+class Inventory(ingList: List<Category>)
 
-}
-val mockSpiceInventory = listOf(
+val mockSpiceInventory = mutableListOf(
     Ingredient("Salt", "1 LB"),
     Ingredient("Pepper", "3 Oz")
 )
-val mockVegiInventory = listOf(
+val mockVegiInventory = mutableListOf(
     Ingredient("Tomatoes", "3"),
     Ingredient("Cucumbers", "3"),
     Ingredient("Carrots", "3"),
@@ -19,18 +18,16 @@ val mockVegiInventory = listOf(
     Ingredient("Mushrooms", "6"),
 
 )
-val mockProteinInventory = listOf(
+val mockProteinInventory = mutableListOf(
     Ingredient("Chicken Breast", "3 LB"),
     Ingredient("Tofu", "1 LB"),
 )
-val mockInventorySpiceItem =  InventoryItem("Spice", mockSpiceInventory)
-val mockInventoryVegiItem =  InventoryItem("Vegetables", mockVegiInventory)
-val mockInventoryProteinItem =  InventoryItem("Protein", mockProteinInventory)
+val mockInventorySpiceItem =  Category("Spice", mockSpiceInventory)
+val mockInventoryVegiItem =  Category("Vegetables", mockVegiInventory)
+val mockInventoryProteinItem =  Category("Protein", mockProteinInventory)
 val mockItems = mutableListOf(mockInventorySpiceItem, mockInventoryVegiItem,
     mockInventoryProteinItem)
 
 
 
-data class InventoryItem(val title: String, val items: List<Ingredient>){
-
-}
+data class Category(val title: String, val items: MutableList<Ingredient>)

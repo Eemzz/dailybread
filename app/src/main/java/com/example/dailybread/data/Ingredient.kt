@@ -1,3 +1,5 @@
 package com.example.dailybread.data
 
-data class Ingredient(val name: String?, val count: String?)
+data class Ingredient(var name: String?, var count: String?)
+
+
