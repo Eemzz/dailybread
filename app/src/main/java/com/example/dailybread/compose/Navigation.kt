@@ -3,9 +3,12 @@ package com.example.dailybread.compose
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import com.example.dailybread.data.Recipe
 
 @Composable
 fun MyAppNavHost(
@@ -37,8 +40,12 @@ fun MyAppNavHost(
         composable("account") {
             AccountScreen(navController)
         }
-        composable("recipe") {
+        composable("recipe")
+           {
             RecipeScreen(navController)
+        }
+        composable("recipeList") {
+            RecipeListScreen(navController)
         }
     }
 }

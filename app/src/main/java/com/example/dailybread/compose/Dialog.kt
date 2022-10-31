@@ -4,6 +4,7 @@ package com.example.dailybread.compose
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -19,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dailybread.InventoryRepository.addCategory
@@ -27,6 +29,69 @@ import com.example.dailybread.InventoryRepository.editIngredient
 import com.example.dailybread.InventoryRepository.removeCategory
 import com.example.dailybread.data.Category
 import com.example.dailybread.data.Ingredient
+import com.example.dailybread.data.Recipe
+
+
+@Composable
+fun DisplayRecipe(openDialog: MutableState<Boolean>, recipe: Recipe){
+    AlertDialog(
+        shape = RoundedCornerShape
+            (5),
+        onDismissRequest = {
+            openDialog.value = false
+        },
+
+        text = {
+            LazyColumn(contentPadding = PaddingValues(16.dp)) {
+                item{
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(top = 20.dp), horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(text = recipe.name, fontSize = 25.sp, color = Color.DarkGray)
+                    }
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(20.dp)
+                    ) {
+                        Text(
+                            text = "Ingredients",
+                            fontSize = 20.sp,
+                            color = Color.DarkGray,
+                            textAlign = TextAlign.Center
+                        )
+                        recipe.ingredients.forEach {
+                            Text(text = it, color = Color.DarkGray)
+                        }
+                    }
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(20.dp)
+                    ) {
+                        Text(
+                            text = "Instructions", fontSize = 20.sp, color = Color.DarkGray,
+                            textAlign = TextAlign.Center
+                        )
+                        recipe.instructions.forEach {
+                            Text(text = it, color = Color.DarkGray)
+                        }
+                    }
+
+                }
+            }
+
+
+        },
+        buttons = {
+
+        }
+    )
+
+}
+
 @Composable
 fun ChangePasswordDialog(openDialog: MutableState<Boolean>){
     val NewCategoryTextState = remember { mutableStateOf(TextFieldValue()) }

@@ -31,8 +31,10 @@ import androidx.navigation.NavController
 import com.example.dailybread.R
 import kotlinx.coroutines.launch
 
+
 @Composable
 fun HomeScreen(navController: NavController) {
+
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val openDrawer: () -> Unit = {
@@ -104,7 +106,8 @@ fun HomeScreen(navController: NavController,
                                         btnText =
                                         "Search"
                                     ) {
-                                        navController.navigate("recipe")
+                                        //TODO HTTP call
+                                        navController.navigate("recipeList")
                                     }
                                 }
                             }
