@@ -160,7 +160,7 @@ fun HomeScreen(navController: NavController,
                             .padding(20.dp)
                             .fillMaxSize()
                             .clickable {
-                                navController.navigate("edit")
+                                navController.navigate("inventory")
                             }
                         ) {
                             Column(

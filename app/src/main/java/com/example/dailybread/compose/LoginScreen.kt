@@ -85,7 +85,7 @@ fun LoginScreen(navController: NavController) {
                                         KeyboardOptions(
                                             autoCorrect = false,
                                             keyboardType = KeyboardType.Password,
-                                            imeAction = ImeAction.Next
+                                            imeAction = ImeAction.Done
                                         ),
                                         passwordTextState
                                     )

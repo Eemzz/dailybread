@@ -47,7 +47,6 @@ fun EditInventoryScreen(navController: NavController) {
 fun EditInventoryScreen(categories: SnapshotStateList<Category>,
                         openDrawer: () -> Unit, navController: NavController) {
     val openAddCategoryDialog = remember { mutableStateOf(false) }
-    val openEditDialog = remember { mutableStateOf(false) }
     Scaffold(topBar = {MyTopAppBar(title = "Edit Inventory",
         buttonIcon = Icons.Filled.Menu,
         onButtonClicked = { openDrawer() }) },
@@ -76,10 +75,9 @@ fun EditInventoryScreen(categories: SnapshotStateList<Category>,
                 }
             }
             if (openAddCategoryDialog.value) {
-                Dialog() {
-                    AddCategoryContent(openAddCategoryDialog)
-                }
+                AddCategoryDialog(openAddCategoryDialog)
             }
+
 //            if (openEditDialog.value) {
 //                Dialog() {
 //                    EditIngredient(openEditDialog, ingredient, )
@@ -150,21 +148,17 @@ fun EditInventoryCard(categories: SnapshotStateList<Category>, category: Categor
 
 
             if(openAddDialog.value){
-                Dialog() {
-                    AddIngredient(openDialog = openAddDialog, category = category)
-                }
+                AddIngredientDialog(openDialog = openAddDialog, category = category)
+
             }
             if(openDeleteDialog.value){
-                Dialog(){
-                    DeleteCategory(openDialog = openDeleteDialog, category = category)
-                }
+                DeleteCategoryDialog(openDialog = openDeleteDialog, category = category)
             }
             category.items.forEach { ingredient ->
                 IngredientRow(ingredient, categories, category, openEditDialog)
                 if (openEditDialog.value) {
-                    Dialog() {
-                        EditIngredient(openEditDialog, category,ingredient)
-                    }
+                    EditIngredientDialog(openEditDialog, category,ingredient)
+
                 }
 
             }

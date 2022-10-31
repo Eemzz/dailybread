@@ -70,8 +70,14 @@ fun AccountScreen(openDrawer: () -> Unit){
                             .fillMaxHeight(),
                         shape = RoundedCornerShape
                             (15)) {
-                        Column(Modifier.padding(30.dp).fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-                            Column(Modifier.padding(16.dp).fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Column(
+                            Modifier
+                                .padding(30.dp)
+                                .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(
+                                Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(text = "User Information", color = Color.DarkGray, fontSize = 25.sp)
                             }
 
@@ -82,7 +88,10 @@ fun AccountScreen(openDrawer: () -> Unit){
 
                                 Text(text ="Email", color = Color.DarkGray, fontSize = 20.sp) //TODO make this display email
 
-                            Column(Modifier.padding( 16.dp).fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(
+                                Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
                                 Button(onClick = { openDialog.value = !openDialog.value },shape = RoundedCornerShape(50),
                                     colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
                                     modifier = Modifier
@@ -103,7 +112,7 @@ fun AccountScreen(openDrawer: () -> Unit){
                 }
             }
             if (openDialog.value) {
-
+                val NewCategoryTextState = remember { mutableStateOf(TextFieldValue()) }
                 Card(
                     Modifier
                         .align(Alignment.Center)
@@ -122,7 +131,7 @@ fun AccountScreen(openDrawer: () -> Unit){
                         (5),
                     elevation = 4.dp
                 ) {
-                    val NewCategoryTextState = remember { mutableStateOf(TextFieldValue()) }
+
                     Column(Modifier.padding(16.dp), horizontalAlignment = CenterHorizontally) {
                         Text(text = "Change Password", color = Color.DarkGray, fontSize = 20.sp)
                         DBTextField(
@@ -131,7 +140,7 @@ fun AccountScreen(openDrawer: () -> Unit){
                             KeyboardOptions(
                                 autoCorrect = false,
                                 keyboardType = KeyboardType.Text,
-                                imeAction = ImeAction.Done
+                                imeAction = ImeAction.Next
                             ),
                             NewCategoryTextState
                         )
@@ -145,39 +154,10 @@ fun AccountScreen(openDrawer: () -> Unit){
                             ),
                             NewCategoryTextState
                         )
-//
-                        Row(Modifier.padding(top = 16.dp)){
-                            Button(
-                                onClick = {
-
-
-                                },
-                                shape = RoundedCornerShape(50),
-                                colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
-                                modifier = Modifier
-                                    .width(120.dp)
-                                    .height(50.dp)
-                                    .padding(5.dp)
-
-                            ) {
-                                Text(
-                                    text = "Confirm", modifier = Modifier, color = Color.White,
-                                    fontSize
-                                    = 15.sp
-                                )
-                            }
-                            Button(onClick = { openDialog.value = !openDialog.value },shape = RoundedCornerShape(50),
-                                colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
-                                modifier = Modifier
-                                    .width(120.dp)
-                                    .height(50.dp)
-                                    .padding(5.dp)) {
-                                Text(text = "Cancel",modifier = Modifier, color = Color.White,
-                                    fontSize
-                                    = 15.sp)
-
-                            }
+                        if(openDialog.value){
+                            ChangePasswordDialog(openDialog = openDialog)
                         }
+
 
 
                     }

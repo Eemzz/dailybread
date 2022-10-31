@@ -28,7 +28,14 @@ import com.example.dailybread.R
 
 @Composable
 fun SignUpScreen(navController: NavController) {
-
+    val nameTextState =
+        remember { mutableStateOf(TextFieldValue()) }
+    val emailTextState =
+        remember { mutableStateOf(TextFieldValue()) }
+    val confirmTextState =
+        remember { mutableStateOf(TextFieldValue()) }
+    val passwordTextState =
+        remember { mutableStateOf(TextFieldValue()) }
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.appbg1),
@@ -62,14 +69,7 @@ fun SignUpScreen(navController: NavController) {
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Column(Modifier.padding(20.dp)) {
-                                    val nameTextState =
-                                        remember { mutableStateOf(TextFieldValue()) }
-                                    val emailTextState =
-                                        remember { mutableStateOf(TextFieldValue()) }
-                                    val confirmTextState =
-                                        remember { mutableStateOf(TextFieldValue()) }
-                                    val passwordTextState =
-                                        remember { mutableStateOf(TextFieldValue()) }
+
                                     DBTextField(
                                         "Enter Your Name",
                                         KeyboardOptions(
@@ -102,7 +102,7 @@ fun SignUpScreen(navController: NavController) {
                                         KeyboardOptions(
                                             autoCorrect = false,
                                             keyboardType = KeyboardType.Password,
-                                            imeAction = ImeAction.Next
+                                            imeAction = ImeAction.Done
                                         ),
                                         passwordTextState
                                     )
@@ -118,6 +118,7 @@ fun SignUpScreen(navController: NavController) {
                                         btnText = "Register"
                                     ) {
                                         //TODO add user to data base
+
                                         navController.navigate("home")
                                     }
                                 }
