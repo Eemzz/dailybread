@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,10 +26,22 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.dailybread.R
+import com.example.dailybread.user.User
+import com.example.dailybread.user.UserManager
 
 @Composable
 fun SignUpScreen(navController: NavController) {
     val context = LocalContext.current
+
+    val nameTextState =
+        remember { mutableStateOf(TextFieldValue()) }
+    val emailTextState =
+        remember { mutableStateOf(TextFieldValue()) }
+    val confirmTextState =
+        remember { mutableStateOf(TextFieldValue()) }
+    val passwordTextState =
+        remember { mutableStateOf(TextFieldValue()) }
+
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.appbg1),
@@ -62,14 +75,7 @@ fun SignUpScreen(navController: NavController) {
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Column(Modifier.padding(20.dp)) {
-                                    val nameTextState =
-                                        remember { mutableStateOf(TextFieldValue()) }
-                                    val emailTextState =
-                                        remember { mutableStateOf(TextFieldValue()) }
-                                    val confirmTextState =
-                                        remember { mutableStateOf(TextFieldValue()) }
-                                    val passwordTextState =
-                                        remember { mutableStateOf(TextFieldValue()) }
+
                                     DBTextField(
                                         "Enter Your Name",
                                         KeyboardOptions(
@@ -98,7 +104,7 @@ fun SignUpScreen(navController: NavController) {
                                         confirmTextState
                                     )
                                     DBTextField(
-                                        "Renter Your Password",
+                                        "Re-enter Your Password",
                                         KeyboardOptions(
                                             autoCorrect = false,
                                             keyboardType = KeyboardType.Password,
@@ -106,7 +112,6 @@ fun SignUpScreen(navController: NavController) {
                                         ),
                                         passwordTextState
                                     )
-
 
                                 }
                                 Column(
@@ -118,10 +123,20 @@ fun SignUpScreen(navController: NavController) {
                                         btnText = "Register"
                                     ) {
                                         //TODO add user to data base
-                                        navController.navigate("home")
+                                        if (passwordTextState.value.text.equals(confirmTextState.value.text)) {
+                                            UserManager.createUser(
+                                                nameTextState.value.text,
+                                                emailTextState.value.text,
+                                                passwordTextState.value.text
+                                            )
+                                            navController.navigate("home")
+                                        }
+
+                                        //var user = UserManager.createuser(UserManager.userInfo)
+                                        //UserManager.createuser(UserManager.userInfo)
+
                                     }
                                 }
-
 
                             }
 
@@ -139,4 +154,5 @@ fun SignUpScreen(navController: NavController) {
 
 
     }
+
 }
