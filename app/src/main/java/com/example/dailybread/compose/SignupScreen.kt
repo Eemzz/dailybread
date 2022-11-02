@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -26,13 +25,9 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.dailybread.R
-import com.example.dailybread.user.User
-import com.example.dailybread.user.UserManager
 
 @Composable
 fun SignUpScreen(navController: NavController) {
-    val context = LocalContext.current
-
     val nameTextState =
         remember { mutableStateOf(TextFieldValue()) }
     val emailTextState =
@@ -41,7 +36,6 @@ fun SignUpScreen(navController: NavController) {
         remember { mutableStateOf(TextFieldValue()) }
     val passwordTextState =
         remember { mutableStateOf(TextFieldValue()) }
-
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.appbg1),
@@ -75,7 +69,14 @@ fun SignUpScreen(navController: NavController) {
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Column(Modifier.padding(20.dp)) {
-
+                                    val nameTextState =
+                                        remember { mutableStateOf(TextFieldValue()) }
+                                    val emailTextState =
+                                        remember { mutableStateOf(TextFieldValue()) }
+                                    val confirmTextState =
+                                        remember { mutableStateOf(TextFieldValue()) }
+                                    val passwordTextState =
+                                        remember { mutableStateOf(TextFieldValue()) }
                                     DBTextField(
                                         "Enter Your Name",
                                         KeyboardOptions(
@@ -113,6 +114,7 @@ fun SignUpScreen(navController: NavController) {
                                         passwordTextState
                                     )
 
+
                                 }
                                 Column(
                                     Modifier
@@ -138,6 +140,7 @@ fun SignUpScreen(navController: NavController) {
                                     }
                                 }
 
+
                             }
 
 
@@ -154,5 +157,4 @@ fun SignUpScreen(navController: NavController) {
 
 
     }
-
 }

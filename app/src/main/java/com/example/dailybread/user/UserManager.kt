@@ -4,10 +4,11 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavController
 
+import androidx.compose.runtime.Composable
+
 object UserManager {
     //TODO remove for session management
-    var isUserLoggedIn = false
-    //var userInfo = ArrayList<MutableState<TextFieldValue>>();
+    var isUserLoggedIn = true
     fun isLoggedIn(): Boolean {
         return isUserLoggedIn
     }

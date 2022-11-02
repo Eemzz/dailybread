@@ -1,10 +1,16 @@
 package com.example.dailybread.data
+import android.content.Context
+import androidx.compose.runtime.Composable
+import java.io.IOException
 
 data class Recipe(
     val name: String,
     val ingredients: List<String>,
     val instructions: List<String>
 )
+
+
+
 
 val spaghetti = Recipe(
     "Spaghetti",

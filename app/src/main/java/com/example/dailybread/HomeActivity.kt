@@ -6,8 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
@@ -16,7 +14,10 @@ import com.example.dailybread.data.mockItems
 import com.example.dailybread.ui.theme.DailyBreadTheme
 import kotlinx.coroutines.launch
 
+
 class HomeActivity: ComponentActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
@@ -28,6 +29,8 @@ class HomeActivity: ComponentActivity() {
                 MyAppNavHost(navController = navController) }
             }
     }
+
+
 
 //test
     @Preview(showBackground = true)

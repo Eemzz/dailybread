@@ -1,5 +1,6 @@
 package com.example.dailybread.compose
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,12 +23,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.NamedNavArgument
 import com.example.dailybread.data.Recipe
 import com.example.dailybread.data.spaghetti
 import kotlinx.coroutines.launch
+import com.example.dailybread.data.recipes
+
+
 
 @Composable
-fun RecipeScreen(navController: NavController) {
+fun RecipeScreen(navController: NavController, recipeName: String = "") {
+
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val openDrawer: () -> Unit = {
@@ -36,13 +42,18 @@ fun RecipeScreen(navController: NavController) {
         }
     }
     MyModalDrawer(drawerState, navController) {
-        RecipeScreen(openDrawer = openDrawer)
+        recipes.recipes.forEach{
+            if(recipeName == it.name)
+                RecipeScreen(recipe = it,openDrawer = openDrawer)
+            else
+                RecipeScreen(openDrawer = openDrawer)
+        }
+
     }
 }
 
 @Composable
 fun RecipeScreen(recipe: Recipe = spaghetti, openDrawer: () -> Unit) {
-    val context = LocalContext.current
     Scaffold(topBar = {MyTopAppBar(title = "Recipe",
         buttonIcon = Icons.Filled.Menu,
         onButtonClicked = { openDrawer() })}) {

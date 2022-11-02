@@ -13,7 +13,7 @@ fun RouterScreen(navController: NavController) {
             }
         }
     } else {
-        navController.navigate("signup") {
+        navController.navigate("login") {
             popUpTo("router") {
                 inclusive = true
             }

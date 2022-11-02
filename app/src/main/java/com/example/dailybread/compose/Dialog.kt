@@ -4,12 +4,14 @@ package com.example.dailybread.compose
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -18,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dailybread.InventoryRepository.addCategory
@@ -26,204 +29,541 @@ import com.example.dailybread.InventoryRepository.editIngredient
 import com.example.dailybread.InventoryRepository.removeCategory
 import com.example.dailybread.data.Category
 import com.example.dailybread.data.Ingredient
+import com.example.dailybread.data.Recipe
+
 
 @Composable
-fun Dialog(DialogContent: @Composable BoxScope.() -> Unit) {
-    Box(
-        Modifier
-            .fillMaxSize()
-    ) {
-        Card(
-            Modifier
-                .clickable { }
-                //.align(Center)
-                .fillMaxSize()
-                .alpha(0.7f), backgroundColor = Color.White,
-            elevation = 0.dp
-        ) {}
+fun DisplayRecipe(openDialog: MutableState<Boolean>, recipe: Recipe){
+    AlertDialog(
+        shape = RoundedCornerShape
+            (5),
+        onDismissRequest = {
+            openDialog.value = false
+        },
 
-        Card(
-            Modifier
-                .align(Center)
-                .padding(20.dp, 10.dp),
+        text = {
+            LazyColumn(contentPadding = PaddingValues(16.dp)) {
+                item{
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(top = 20.dp), horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(text = recipe.name, fontSize = 25.sp, color = Color.DarkGray)
+                    }
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(20.dp)
+                    ) {
+                        Text(
+                            text = "Ingredients",
+                            fontSize = 20.sp,
+                            color = Color.DarkGray,
+                            textAlign = TextAlign.Center
+                        )
+                        recipe.ingredients.forEach {
+                            Text(text = it, color = Color.DarkGray)
+                        }
+                    }
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(20.dp)
+                    ) {
+                        Text(
+                            text = "Instructions", fontSize = 20.sp, color = Color.DarkGray,
+                            textAlign = TextAlign.Center
+                        )
+                        recipe.instructions.forEach {
+                            Text(text = it, color = Color.DarkGray)
+                        }
+                    }
 
-            backgroundColor = Color.White,
-            shape = RoundedCornerShape
-                (5),
-            elevation = 4.dp
-        ) {
-            DialogContent()
+                }
+            }
+
+
+        },
+        buttons = {
+
         }
-    }
+    )
 
 }
 
 @Composable
-fun DeleteCategory(openDialog: MutableState<Boolean>, category: Category) {
-    Column(Modifier.padding(16.dp), horizontalAlignment = CenterHorizontally) {
-        Text(text = "Are you sure you want to delete \"" + category.title + "\" category?",
-            color
-            = Color.DarkGray)
-        Row(Modifier.padding(top = 16.dp)){
-            Button(
-                modifier = Modifier.padding(5.dp),
-                onClick = {
-                    removeCategory(category)
-                    openDialog.value = false},
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
+fun ChangePasswordDialog(openDialog: MutableState<Boolean>){
+    val NewCategoryTextState = remember { mutableStateOf(TextFieldValue()) }
+    AlertDialog(
+        shape = RoundedCornerShape
+            (5),
+        onDismissRequest = {
+            openDialog.value = false
+        },
+
+        text = {
+            Column(
+                Modifier
+                    .padding(top = 16.dp)
+                    .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Yes", modifier = Modifier, color = Color.White,
-                    fontSize
-                    = 10.sp
+                Text(text = "Change Password", color = Color.DarkGray, fontSize = 20.sp)
+                DBTextField(
+
+                    "Current Password",
+                    KeyboardOptions(
+                        autoCorrect = false,
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    NewCategoryTextState
+                )
+                DBTextField(
+
+                    "New Password",
+                    KeyboardOptions(
+                        autoCorrect = false,
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                    NewCategoryTextState
                 )
 
             }
-            Button(
-                modifier = Modifier.padding(5.dp),
-                onClick = { openDialog.value = false},
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
+
+        },
+
+        buttons = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                horizontalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = "Cancel", modifier = Modifier, color = Color.White,
-                    fontSize
-                    = 10.sp
-                )
+                Button(
+                    onClick = {
 
+
+                    },
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(50.dp)
+                        .padding(5.dp)
+
+                ) {
+                    Text(
+                        text = "Confirm", modifier = Modifier, color = Color.White,
+                        fontSize
+                        = 15.sp
+                    )
+                }
+                Button(onClick = { openDialog.value = !openDialog.value },shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(50.dp)
+                        .padding(5.dp)) {
+                    Text(text = "Cancel",modifier = Modifier, color = Color.White,
+                        fontSize
+                        = 15.sp)
+
+                }
             }
-        }
 
-    }
+        },
+    )
 }
+
 @Composable
-fun AddIngredient(openDialog: MutableState<Boolean>,category: Category){
+fun DeleteCategoryDialog(openDialog: MutableState<Boolean>, category: Category) {
+
+    AlertDialog(
+        shape = RoundedCornerShape
+            (5),
+        onDismissRequest = {
+            openDialog.value = false
+        },
+        title = {
+            Column(
+                Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Delete Category", color
+                    = Color.DarkGray, fontSize = 20.sp
+                )
+            }
+        },
+        text = {
+            Column(
+                Modifier
+                    .padding(top = 16.dp)
+                    .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Are you sure you want to delete \"" + category.title + "\" category?",
+                    color
+                    = Color.DarkGray
+                )
+            }
+
+
+        },
+
+        buttons = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(50.dp)
+                        .padding(5.dp),
+                    onClick = {
+                        removeCategory(category)
+                        openDialog.value = false
+                    },
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01))
+                ) {
+                    Text(
+                        text = "Yes", modifier = Modifier, color = Color.White,
+                        fontSize
+                        = 15.sp
+                    )
+                }
+                Button(
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(50.dp)
+                        .padding(5.dp),
+                    onClick = {
+                        openDialog.value = false
+                    },
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
+                ) {
+                    Text(
+                        text = "Cancel", modifier = Modifier, color = Color.White,
+                        fontSize
+                        = 15.sp
+                    )
+                }
+            }
+
+        },
+
+        )
+
+
+}
+
+@Composable
+fun AddIngredientDialog(openDialog: MutableState<Boolean>, category: Category) {
     val addIngredientNameTextState = remember { mutableStateOf(TextFieldValue()) }
     val addIngredientCountTextState = remember { mutableStateOf(TextFieldValue()) }
-    Column(Modifier.padding(16.dp), horizontalAlignment = CenterHorizontally) {
-        Text(text = "Add Ingredient", color = Color.DarkGray, fontSize = 20.sp)
-        DBTextField(label = "Name",
-            keyboardOptions = KeyboardOptions(
-                autoCorrect = false,
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            ),
-            textState = addIngredientNameTextState
-        )
-        DBTextField(label = "Quantity",
-            keyboardOptions = KeyboardOptions(
-                autoCorrect = false,
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            ),
-            textState = addIngredientCountTextState
-        )
 
-        Row(Modifier.padding(top = 16.dp)){
-            Button(
-                onClick = {
-                    val newIng = Ingredient(addIngredientNameTextState.value.text, addIngredientCountTextState.value.text)
-                    addIngredient(category, newIng)
-                    openDialog.value = false
-                },
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
-                modifier = Modifier
-                    .padding(5.dp)
+    AlertDialog(
+        shape = RoundedCornerShape
+            (5),
+        onDismissRequest = {
+            openDialog.value = false
+        },
 
+        text = {
+            Column(
+                Modifier
+                    .padding(top = 16.dp)
+                    .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Add", modifier = Modifier, color = Color.White,
-                    fontSize
-                    = 15.sp
+                    text = "Add Ingredient", color
+                    = Color.DarkGray, fontSize = 20.sp, modifier = Modifier.padding(bottom = 10.dp)
                 )
+
+                DBTextField(
+                    label = "Name",
+                    keyboardOptions = KeyboardOptions(
+                        autoCorrect = false,
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                    textState = addIngredientNameTextState
+                )
+                DBTextField(
+                    label = "Quantity",
+                    keyboardOptions = KeyboardOptions(
+                        autoCorrect = false,
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                    textState = addIngredientCountTextState
+                )
+
             }
-            Button(onClick = { openDialog.value = !openDialog.value },shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
+
+        },
+
+        buttons = {
+            Row(
                 modifier = Modifier
-                    .padding(5.dp)) {
-                Text(text = "Cancel",modifier = Modifier, color = Color.White,
-                    fontSize
-                    = 15.sp)
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    onClick = {
+                        val newIng = Ingredient(
+                            addIngredientNameTextState.value.text,
+                            addIngredientCountTextState.value.text
+                        )
+                        addIngredient(category, newIng)
+                        openDialog.value = false
+                    },
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .width(120.dp)
+                        .height(50.dp)
 
+                ) {
+                    Text(
+                        text = "Add", modifier = Modifier, color = Color.White,
+                        fontSize
+                        = 15.sp
+                    )
+                }
+                Button(
+                    onClick = { openDialog.value = !openDialog.value },
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .width(120.dp)
+                        .height(50.dp)
+                ) {
+                    Text(
+                        text = "Cancel", modifier = Modifier, color = Color.White,
+                        fontSize
+                        = 15.sp
+                    )
+
+                }
             }
-        }
 
-    }
+        },
+    )
+
 }
 
 @Composable
-fun EditIngredient(openDialog: MutableState<Boolean>,category: Category ,ingredient: Ingredient) {
+fun EditIngredientDialog(
+    openDialog: MutableState<Boolean>,
+    category: Category, ingredient: Ingredient
+) {
     val editIngredientNameTextState = remember { mutableStateOf(TextFieldValue()) }
     val editIngredientCountTextState = remember { mutableStateOf(TextFieldValue()) }
     var newName: String = ingredient.name.toString()
     var newCount: String = ingredient.count.toString()
-    Column(Modifier.padding(16.dp), horizontalAlignment = CenterHorizontally) {
-        Text(text = "Edit Ingredient", color = Color.DarkGray, fontSize = 20.sp)
-        DBTextField(label = ingredient.name.toString(),
-            keyboardOptions = KeyboardOptions(
-                autoCorrect = false,
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            ),
-            textState = editIngredientNameTextState
-        )
-        DBTextField(label = ingredient.count.toString(),
-            keyboardOptions = KeyboardOptions(
-            autoCorrect = false,
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Done
-            ),
-            textState = editIngredientCountTextState
-        )
 
-        Row(Modifier.padding(top = 16.dp)){
-            Button(
-                onClick = {
+    AlertDialog(
+        shape = RoundedCornerShape
+            (5),
+        onDismissRequest = {
+            openDialog.value = false
+        },
 
-                    if(editIngredientNameTextState.value.text.isNotBlank()){
-                        newName = editIngredientNameTextState.value.text
-                    }
-                    if(editIngredientCountTextState.value.text.isNotBlank()){
-                        newCount = editIngredientCountTextState.value.text
-                    }
-                    editIngredient(category,ingredient,
-                        newName,
-                        newCount)
-
-
-                    openDialog.value = false
-                },
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
-                modifier = Modifier
-                    .width(120.dp)
-                    .height(50.dp)
-                    .padding(5.dp)
-
+        text = {
+            Column(
+                Modifier
+                    .padding(top = 16.dp)
+                    .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Update", modifier = Modifier, color = Color.White,
-                    fontSize
-                    = 15.sp
+                    text = "Edit Ingredient", color
+                    = Color.DarkGray, fontSize = 20.sp, modifier = Modifier.padding(bottom = 10.dp)
                 )
+
+                DBTextField(
+                    label = ingredient.name.toString(),
+                    keyboardOptions = KeyboardOptions(
+                        autoCorrect = false,
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                    textState = editIngredientNameTextState
+                )
+                DBTextField(
+                    label = ingredient.count.toString(),
+                    keyboardOptions = KeyboardOptions(
+                        autoCorrect = false,
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                    textState = editIngredientCountTextState
+                )
+
             }
-            Button(onClick = { openDialog.value = !openDialog.value },shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
+
+        },
+
+        buttons = {
+            Row(
                 modifier = Modifier
-                    .width(120.dp)
-                    .height(50.dp)
-                    .padding(5.dp)) {
-                Text(text = "Cancel",modifier = Modifier, color = Color.White,
-                    fontSize
-                    = 15.sp)
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    onClick = {
+
+                        if (editIngredientNameTextState.value.text.isNotBlank()) {
+                            newName = editIngredientNameTextState.value.text
+                        }
+                        if (editIngredientCountTextState.value.text.isNotBlank()) {
+                            newCount = editIngredientCountTextState.value.text
+                        }
+                        editIngredient(
+                            category, ingredient,
+                            newName,
+                            newCount
+                        )
+
+
+                        openDialog.value = false
+                    },
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(50.dp)
+                        .padding(5.dp)
+
+                ) {
+                    Text(
+                        text = "Update", modifier = Modifier, color = Color.White,
+                        fontSize
+                        = 15.sp
+                    )
+                }
+                Button(
+                    onClick = { openDialog.value = !openDialog.value },
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(50.dp)
+                        .padding(5.dp)
+                ) {
+                    Text(
+                        text = "Cancel", modifier = Modifier, color = Color.White,
+                        fontSize
+                        = 15.sp
+                    )
+
+                }
+            }
+
+        },
+    )
+
+}
+
+@Composable
+fun AddCategoryDialog(openDialog: MutableState<Boolean>){
+    val NewCategoryTextState = remember { mutableStateOf(TextFieldValue()) }
+    AlertDialog(
+        shape = RoundedCornerShape
+            (5),
+        onDismissRequest = {
+            openDialog.value = false
+        },
+
+        text = {
+            Column(
+                Modifier
+                    .padding(top = 16.dp)
+                    .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Add Category", color
+                    = Color.DarkGray, fontSize = 20.sp, modifier = Modifier.padding(bottom = 10.dp)
+                )
+
+                DBTextField(
+
+                    "Protein, Vegetables, Fruit, etc",
+                    KeyboardOptions(
+                        autoCorrect = false,
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                    NewCategoryTextState
+                )
 
             }
-        }
 
-    }
+        },
 
+        buttons = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    onClick = {
+                        openDialog.value = false
+
+                        val ing = Ingredient("", "")
+                        val ingList = mutableListOf(ing)
+                        val newCategory =
+                            Category(NewCategoryTextState.value.text, ingList)
+
+                        addCategory(newCategory)
+                    },
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(50.dp)
+                        .padding(5.dp)
+
+                ) {
+                    Text(
+                        text = "Add", modifier = Modifier, color = Color.White,
+                        fontSize
+                        = 15.sp
+                    )
+                }
+                Button(
+                    onClick = { openDialog.value = !openDialog.value }, shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(50.dp)
+                        .padding(5.dp)
+                ) {
+                    Text(
+                        text = "Cancel", modifier = Modifier, color = Color.White,
+                        fontSize
+                        = 15.sp
+                    )
+
+                }
+            }
+
+        },
+    )
 }
 
 @Composable
@@ -242,7 +582,7 @@ fun AddCategoryContent(openDialog: MutableState<Boolean>) {
             NewCategoryTextState
         )
 
-        Row(Modifier.padding(top = 16.dp)){
+        Row(Modifier.padding(top = 16.dp)) {
             Button(
                 onClick = {
                     openDialog.value = false
@@ -268,15 +608,19 @@ fun AddCategoryContent(openDialog: MutableState<Boolean>) {
                     = 15.sp
                 )
             }
-            Button(onClick = { openDialog.value = !openDialog.value },shape = RoundedCornerShape(50),
+            Button(
+                onClick = { openDialog.value = !openDialog.value }, shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
                 modifier = Modifier
                     .width(120.dp)
                     .height(50.dp)
-                    .padding(5.dp)) {
-                Text(text = "Cancel",modifier = Modifier, color = Color.White,
+                    .padding(5.dp)
+            ) {
+                Text(
+                    text = "Cancel", modifier = Modifier, color = Color.White,
                     fontSize
-                    = 15.sp)
+                    = 15.sp
+                )
 
             }
         }
