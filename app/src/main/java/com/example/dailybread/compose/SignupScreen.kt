@@ -25,6 +25,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.dailybread.R
+import com.example.dailybread.user.User
+import com.example.dailybread.user.UserManager
 
 @Composable
 fun SignUpScreen(navController: NavController) {
@@ -69,14 +71,6 @@ fun SignUpScreen(navController: NavController) {
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Column(Modifier.padding(20.dp)) {
-                                    val nameTextState =
-                                        remember { mutableStateOf(TextFieldValue()) }
-                                    val emailTextState =
-                                        remember { mutableStateOf(TextFieldValue()) }
-                                    val confirmTextState =
-                                        remember { mutableStateOf(TextFieldValue()) }
-                                    val passwordTextState =
-                                        remember { mutableStateOf(TextFieldValue()) }
                                     DBTextField(
                                         "Enter Your Name",
                                         KeyboardOptions(
@@ -125,7 +119,8 @@ fun SignUpScreen(navController: NavController) {
                                         btnText = "Register"
                                     ) {
                                         //TODO add user to data base
-                                        if (passwordTextState.value.text.equals(confirmTextState.value.text)) {
+                                        if (passwordTextState.value.text == confirmTextState.value.text)
+                                        {
                                             UserManager.createUser(
                                                 nameTextState.value.text,
                                                 emailTextState.value.text,
