@@ -126,6 +126,7 @@ fun SignUpScreen(navController: NavController) {
                                                 emailTextState.value.text,
                                                 passwordTextState.value.text
                                             )
+                                            UserManager.isUserLoggedIn = true
                                             navController.navigate("home")
                                         }
 

@@ -8,6 +8,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+//Set up retrofit for http requests to backend
 const val BASE_URL = "http://10.0.2.2:3000/auth/";
 object Retro {
     private val okHttpClient = OkHttpClient.Builder()
@@ -31,25 +32,5 @@ object Retro {
 
             retrofitBuilder.create(ApiInterface::class.java)
     }
-
-    /*fun getMyData() {
-        val retrofitData = retrofitBuilder.getData();
-
-        retrofitData.enqueue(object: Callback<User> {
-            override fun onResponse(call: Call<User>, response: Response<User>) {
-                TODO("Not yet implemented")
-                val responseBody = response.body()!!
-
-            }
-
-            override fun onFailure(call: Call<User>, t: Throwable) {
-                TODO("Not yet implemented")
-            }
-        })
-
-    }*/
-
-
-
 
 }

@@ -7,6 +7,7 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
 
+//Retrofit interface to handle GET and POST requests
 interface ApiInterface {
 
     @GET ("posts")
