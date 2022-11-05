@@ -1,5 +1,6 @@
-package com.example.dailybread.compose
+package com.example.dailybread.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -29,6 +30,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.dailybread.R
+import com.example.dailybread.compose.DBButton
+import com.example.dailybread.compose.DBTextField
+import com.example.dailybread.compose.MyModalDrawer
+import com.example.dailybread.compose.MyTopAppBar
 import kotlinx.coroutines.launch
 
 
@@ -46,6 +51,8 @@ fun HomeScreen(navController: NavController) {
         HomeScreen(openDrawer = openDrawer, navController = navController)
     }
 }
+
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(navController: NavController,
                openDrawer: () -> Unit) {
@@ -106,7 +113,8 @@ fun HomeScreen(navController: NavController,
                                         btnText =
                                         "Search"
                                     ) {
-                                        //TODO HTTP call
+                                        //TODO api call
+//                                        getRecipes()
                                         navController.navigate("recipeList")
                                     }
                                 }
@@ -136,7 +144,7 @@ fun HomeScreen(navController: NavController,
                                         btnText = "Generate"
                                     ) {
                                         //TODO make api call
-                                        navController.navigate("recipe")
+                                        navController.navigate("recipeList")
                                     }
                                 }
                                 Column(

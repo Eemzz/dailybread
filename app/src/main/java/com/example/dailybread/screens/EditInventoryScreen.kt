@@ -1,5 +1,6 @@
-package com.example.dailybread.compose
+package com.example.dailybread.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.dailybread.InventoryRepository
 import com.example.dailybread.R
+import com.example.dailybread.compose.*
 import com.example.dailybread.data.Category
 import com.example.dailybread.data.Ingredient
 import com.example.dailybread.data.mockItems
@@ -43,11 +45,13 @@ fun EditInventoryScreen(navController: NavController) {
     }
 }
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun EditInventoryScreen(categories: SnapshotStateList<Category>,
                         openDrawer: () -> Unit, navController: NavController) {
     val openAddCategoryDialog = remember { mutableStateOf(false) }
-    Scaffold(topBar = {MyTopAppBar(title = "Edit Inventory",
+    Scaffold(topBar = {
+        MyTopAppBar(title = "Edit Inventory",
         buttonIcon = Icons.Filled.Menu,
         onButtonClicked = { openDrawer() }) },
         floatingActionButton = {

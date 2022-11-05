@@ -14,17 +14,7 @@ object InventoryRepository {
     fun deleteIngredient(item: Category, ingredient: Ingredient): Boolean {
         return mockItems.find { it == item }?.items?.remove(ingredient) ?: false
     }
-//    fun lessOfIngredient(item: Category, ingredient: Ingredient) {
-//
-//        val newCount = ingredient.count
-//        ingredient.setCount(newCount)
-//
-//    }
-//    fun moreOfIngredient(item: Category, ingredient: Ingredient) {
-//        val newCount = ingredient.count - 1
-//        ingredient.setCount(newCount)
-//
-//    }
+
     fun addIngredient(item: Category, ingredient: Ingredient): Boolean {
         return item.items.add(ingredient)
     }
@@ -32,12 +22,12 @@ object InventoryRepository {
         val index = item.items.indexOf(ingredient)
         val updatedIng = Ingredient(newName, newCount)
         item.items[index] = updatedIng
-
     }
 
     fun addCategory(item: Category): Boolean {
         return mockItems.add(item)
     }
+
     fun removeCategory(item: Category): Boolean {
         return mockItems.remove(item)
     }

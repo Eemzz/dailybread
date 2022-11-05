@@ -31,3 +31,4 @@ val mockItems = mutableListOf(mockInventorySpiceItem, mockInventoryVegiItem,
 
 
 data class Category(val title: String, val items: MutableList<Ingredient>)
+

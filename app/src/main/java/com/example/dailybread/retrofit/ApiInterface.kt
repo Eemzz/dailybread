@@ -1,5 +1,6 @@
 package com.example.dailybread.retrofit
 
+import com.example.dailybread.data.Recipe
 import com.example.dailybread.user.User
 import retrofit2.Call
 import retrofit2.http.Field
@@ -20,4 +21,10 @@ interface ApiInterface {
         @Field("email") email:String,
         @Field("password") password:String,
     ): Call<User>
+
+
+    @GET("/recipes")
+    fun getRecipes():Call<List<Recipe>>
+
+
 }

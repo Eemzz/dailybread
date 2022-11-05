@@ -1,36 +1,39 @@
-package com.example.dailybread.compose
+package com.example.dailybread.screens
 
-import android.util.Log
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.DrawerValue
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.example.dailybread.compose.MyModalDrawer
+import com.example.dailybread.compose.MyTopAppBar
+import com.example.dailybread.data.Recipe
+import com.example.dailybread.data.RecipeRepository
+import com.example.dailybread.data.RecipeRepository.id
+import com.example.dailybread.data.recipes
 import kotlinx.coroutines.launch
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import com.example.dailybread.data.*
 
 
 @Composable
-fun RecipeListScreen(navController: NavController) {
+fun RecipeScreen(navController: NavController, recipeName: String = "") {
+
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val openDrawer: () -> Unit = {
@@ -39,22 +42,23 @@ fun RecipeListScreen(navController: NavController) {
         }
     }
     MyModalDrawer(drawerState, navController) {
-        RecipeListScreen(recipes.recipes, openDrawer, navController)
+        recipes.recipes.forEach{
+            if(recipeName == it.name)
+                RecipeScreen(recipe = it,openDrawer = openDrawer)
+            else
+                RecipeScreen(openDrawer = openDrawer)
+        }
 
     }
 }
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun RecipeListScreen(
-    recipes: List<Recipe>, openDrawer: () -> Unit,
-    navController: NavController,
-) {
-    val openDialog = remember { mutableStateOf(false) }
-    var selectedRecipe: Recipe = spaghetti
+fun RecipeScreen(recipe: Recipe = RecipeRepository.getRecipe(id), openDrawer: () -> Unit) {
     Scaffold(topBar = {
         MyTopAppBar(title = "Recipe",
-            buttonIcon = Icons.Filled.Menu,
-            onButtonClicked = { openDrawer() })
+        buttonIcon = Icons.Filled.Menu,
+        onButtonClicked = { openDrawer() })
     }) {
         Box(
             Modifier
@@ -63,58 +67,7 @@ fun RecipeListScreen(
         ) {
 
             LazyColumn {
-                item() {
-                    recipes.forEach {
-                        Card(
-                            Modifier
-                                .padding(20.dp, 10.dp)
-                                .width(300.dp)
-                                .clickable {
-                                    //TODO ideally this should navigate to recipe screen with recipe as param
-                                    openDialog.value = true
-                                    selectedRecipe = it
-                                }
-                                .fillMaxHeight(),
-                            shape = RoundedCornerShape
-                                (5)
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(16.dp),
-                                horizontalAlignment = CenterHorizontally
-                            ) {
-                                Text(it.name, color = Color.DarkGray, fontSize = 20.sp)
-                            }
-                            
-                        }
-
-
-                    }
-
-
-                }
-
-
-            }
-
-        }
-        if(openDialog.value){
-            DisplayRecipe(recipe = selectedRecipe)
-        }
-
-    }
-
-}
-
-@Composable
-fun DisplayRecipe(recipe: Recipe){
-    Box(
-        Modifier
-            .fillMaxSize()
-            .background(Color(0xFFFCF7EC))
-    ) {
-        LazyColumn(){
-            item {
-                Column() {
+                item {
                     Column(
                         Modifier
                             .fillMaxSize()
@@ -152,12 +105,9 @@ fun DisplayRecipe(recipe: Recipe){
                         }
                     }
                 }
+
             }
         }
-
     }
+
 }
-
-
-
-
