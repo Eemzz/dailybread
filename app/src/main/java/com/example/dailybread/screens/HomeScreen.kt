@@ -29,12 +29,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.dailybread.InventoryRepository.getIngredientsString
 import com.example.dailybread.R
-import com.example.dailybread.compose.DBButton
-import com.example.dailybread.compose.DBTextField
-import com.example.dailybread.compose.MyModalDrawer
-import com.example.dailybread.compose.MyTopAppBar
+import com.example.dailybread.compose.*
+import com.example.dailybread.data.RecipeManager.getRecipes
+import com.example.dailybread.data.RecipeManager.getRecipesFromIng
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -55,7 +57,12 @@ fun HomeScreen(navController: NavController) {
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(navController: NavController,
-               openDrawer: () -> Unit) {
+               openDrawer: () -> Unit,
+                ) {
+    val ingListTextState =
+        remember { mutableStateOf(TextFieldValue()) }
+    val load = remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
     Scaffold(topBar = { MyTopAppBar(title = "Home",
         buttonIcon = Icons.Filled.Menu,
         onButtonClicked = { openDrawer() }) }) {
@@ -96,8 +103,7 @@ fun HomeScreen(navController: NavController,
                                 )
 
                                 Column {
-                                    val ingListTextState =
-                                        remember { mutableStateOf(TextFieldValue()) }
+
                                     DBTextField(
                                         "Tomatoes, basil, ground beef, etc",
                                         KeyboardOptions(
@@ -113,9 +119,17 @@ fun HomeScreen(navController: NavController,
                                         btnText =
                                         "Search"
                                     ) {
-                                        //TODO api call
-//                                        getRecipes()
-                                        navController.navigate("recipeList")
+//
+                                        val ingredients = ingListTextState.value.text
+                                        scope.launch(Dispatchers.Main) {
+                                            load.value = true
+                                            withContext(Dispatchers.IO) {
+                                                getRecipesFromIng(ingredients)
+                                            }
+                                            load.value = false
+                                            navController.navigate("recipeList")
+                                        }
+
                                     }
                                 }
                             }
@@ -144,7 +158,15 @@ fun HomeScreen(navController: NavController,
                                         btnText = "Generate"
                                     ) {
                                         //TODO make api call
-                                        navController.navigate("recipeList")
+                                        scope.launch(Dispatchers.Main) {
+                                            load.value = true
+                                            withContext(Dispatchers.IO) {
+//                                                getRecipesFromIng(getIngredientsString())
+                                                getRecipes()
+                                            }
+                                            load.value = false
+                                            navController.navigate("recipeList")
+                                        }
                                     }
                                 }
                                 Column(
@@ -189,6 +211,9 @@ fun HomeScreen(navController: NavController,
 
             }
 
+            if(load.value){
+                Loading()
+            }
 
         }
     }

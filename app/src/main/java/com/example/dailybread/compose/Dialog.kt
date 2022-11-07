@@ -1,21 +1,21 @@
 package com.example.dailybread.compose
 
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.*
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -178,7 +178,10 @@ fun ChangePasswordDialog(openDialog: MutableState<Boolean>){
 }
 
 @Composable
-fun DeleteCategoryDialog(openDialog: MutableState<Boolean>, category: Category) {
+fun DeleteCategoryDialog(
+    openDialog: MutableState<Boolean>,
+    category: Category
+) {
 
     AlertDialog(
         shape = RoundedCornerShape
@@ -478,7 +481,7 @@ fun EditIngredientDialog(
 }
 
 @Composable
-fun AddCategoryDialog(openDialog: MutableState<Boolean>){
+fun AddCategoryDialog(openDialog: MutableState<Boolean>, categories: MutableList<Category>){
     val NewCategoryTextState = remember { mutableStateOf(TextFieldValue()) }
     AlertDialog(
         shape = RoundedCornerShape
@@ -523,12 +526,10 @@ fun AddCategoryDialog(openDialog: MutableState<Boolean>){
                 Button(
                     onClick = {
                         openDialog.value = false
-
-                        val ing = Ingredient("", "")
-                        val ingList = mutableListOf(ing)
                         val newCategory =
-                            Category(NewCategoryTextState.value.text, ingList)
+                            Category(NewCategoryTextState.value.text, mutableListOf())
 
+                        categories.add(newCategory)
                         addCategory(newCategory)
                     },
                     shape = RoundedCornerShape(50),
@@ -587,10 +588,8 @@ fun AddCategoryContent(openDialog: MutableState<Boolean>) {
                 onClick = {
                     openDialog.value = false
 
-                    val ing = Ingredient("", "")
-                    val ingList = mutableListOf(ing)
                     val newCategory =
-                        Category(NewCategoryTextState.value.text, ingList)
+                        Category(NewCategoryTextState.value.text, mutableListOf())
 
                     addCategory(newCategory)
                 },

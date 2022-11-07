@@ -10,12 +10,13 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -26,7 +27,9 @@ import com.example.dailybread.R
 import com.example.dailybread.compose.*
 import com.example.dailybread.data.Category
 import com.example.dailybread.data.Ingredient
-import com.example.dailybread.data.mockItems
+import com.example.dailybread.data.Inventory
+import com.example.dailybread.datastore.InventoryStore
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
@@ -40,31 +43,38 @@ fun EditInventoryScreen(navController: NavController) {
     }
     MyModalDrawer(drawerState, navController) {
 //        val inventory = InventoryRepository.getInventory()
-        val inventory = mockItems.toMutableStateList()
+        val inventory = InventoryRepository.getInventory()
         EditInventoryScreen(inventory, openDrawer = openDrawer, navController = navController)
     }
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun EditInventoryScreen(categories: SnapshotStateList<Category>,
-                        openDrawer: () -> Unit, navController: NavController) {
+fun EditInventoryScreen(
+    categories: MutableList<Category>,
+    openDrawer: () -> Unit, navController: NavController
+) {
     val openAddCategoryDialog = remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     Scaffold(topBar = {
         MyTopAppBar(title = "Edit Inventory",
-        buttonIcon = Icons.Filled.Menu,
-        onButtonClicked = { openDrawer() }) },
+            buttonIcon = Icons.Filled.Menu,
+            onButtonClicked = { openDrawer() })
+    },
         floatingActionButton = {
 
             FloatingActionButton(
                 onClick = {
-                    openAddCategoryDialog.value = !openAddCategoryDialog.value
-
+                    //TODO make api call to save Inventory
+                    scope.launch(Dispatchers.IO) {
+                        InventoryStore.writeInventory(context, Inventory(categories))
+                    }
                 },
                 backgroundColor = colorResource(R.color.DByellow),
                 contentColor = Color.White
             ) {
-                Icon(Icons.Filled.Add, "")
+                Icon(Icons.Filled.Save, "")
             }
         }
     ) {
@@ -73,13 +83,18 @@ fun EditInventoryScreen(categories: SnapshotStateList<Category>,
                 .fillMaxSize()
                 .background(Color(0xFFFCF7EC))
         ) {
-            LazyColumn(Modifier.align(Center)) {
+            LazyColumn(Modifier.align(Alignment.TopCenter).padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(10.dp) ) {
+                item {
+                    DBButton(btnText = "Add category", modifier = Modifier.fillMaxWidth()) {
+                        openAddCategoryDialog.value = !openAddCategoryDialog.value
+                    }
+                }
                 items(categories) { item ->
-                    EditInventoryCard(categories, item)
+                    EditInventoryCard(item)
                 }
             }
             if (openAddCategoryDialog.value) {
-                AddCategoryDialog(openAddCategoryDialog)
+                AddCategoryDialog(openAddCategoryDialog, categories)
             }
 
 //            if (openEditDialog.value) {
@@ -92,43 +107,43 @@ fun EditInventoryScreen(categories: SnapshotStateList<Category>,
     }
 
 }
+
 @Composable
-fun EditInventoryCard(categories: SnapshotStateList<Category>, category: Category) {
+fun EditInventoryCard(category: Category) {
     val openEditDialog = remember { mutableStateOf(false) }
     val openAddDialog = remember { mutableStateOf(false) }
     val openDeleteDialog = remember { mutableStateOf(false) }
     Card(
         Modifier
-            .padding(20.dp, 10.dp)
-            .width(300.dp)
-            .fillMaxHeight(),
+            .fillMaxWidth(),
         shape = RoundedCornerShape
             (5)
     ) {
 
-        Column(Modifier.padding( PaddingValues(16.dp))) {
-            Column(
-                Modifier.fillMaxSize(), horizontalAlignment =
-                Alignment.CenterHorizontally,
-                //CenterVertically
-            ) {
-                Text(
-                    text = "\n" + category.title + "\n",
-                    fontSize = 20.sp,
-                    color = Color.DarkGray,
-                    textAlign = TextAlign.Center
-                )
+        Column(Modifier.padding(PaddingValues(16.dp))) {
 
-            }
-            Row(Modifier.fillMaxSize().padding(bottom = 16.dp), horizontalArrangement =
-            Arrangement.Center,
-                CenterVertically){
+            Text(
+                modifier = Modifier.align(CenterHorizontally),
+                text = "\n" + category.title + "\n",
+                fontSize = 20.sp,
+                color = Color.DarkGray,
+                textAlign = TextAlign.Center
+            )
+
+
+            Row(
+                Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 16.dp), horizontalArrangement =
+                Arrangement.Center,
+                CenterVertically
+            ) {
                 Button(
                     modifier = Modifier.padding(end = 10.dp),
-                    onClick = { openAddDialog.value = !openAddDialog.value},
+                    onClick = { openAddDialog.value = !openAddDialog.value },
                     shape = RoundedCornerShape(15),
                     colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
-                    ) {
+                ) {
                     Text(
                         text = "New Ingredient", modifier = Modifier, color = Color.White,
                         fontSize
@@ -136,7 +151,7 @@ fun EditInventoryCard(categories: SnapshotStateList<Category>, category: Categor
                     )
                 }
                 Button(
-                    onClick = { openDeleteDialog.value = !openDeleteDialog.value},
+                    onClick = { openDeleteDialog.value = !openDeleteDialog.value },
                     shape = RoundedCornerShape(15),
                     colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
                 ) {
@@ -151,17 +166,17 @@ fun EditInventoryCard(categories: SnapshotStateList<Category>, category: Categor
 
 
 
-            if(openAddDialog.value){
+            if (openAddDialog.value) {
                 AddIngredientDialog(openDialog = openAddDialog, category = category)
 
             }
-            if(openDeleteDialog.value){
-                DeleteCategoryDialog(openDialog = openDeleteDialog, category = category)
+            if (openDeleteDialog.value) {
+                DeleteCategoryDialog(openDeleteDialog, category)
             }
             category.items.forEach { ingredient ->
-                IngredientRow(ingredient, categories, category, openEditDialog)
+                IngredientRow(ingredient, category, openEditDialog)
                 if (openEditDialog.value) {
-                    EditIngredientDialog(openEditDialog, category,ingredient)
+                    EditIngredientDialog(openEditDialog, category, ingredient)
 
                 }
 
@@ -175,65 +190,59 @@ fun EditInventoryCard(categories: SnapshotStateList<Category>, category: Categor
 }
 
 
-
 @Composable
 fun IngredientRow(
     ingredient: Ingredient,
-    categories: SnapshotStateList<Category>,
     category: Category,
     openEditDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
 ) {
 
-        Row(
-            Modifier
-                .fillMaxSize()
-                .padding(vertical = 10.dp)
-            ,
-            verticalAlignment = CenterVertically
-        ) {
+    Row(
+        Modifier
+            .fillMaxSize()
+            .padding(vertical = 10.dp),
+        verticalAlignment = CenterVertically
+    ) {
 
-            if (ingredient.name != "") {
-                Text(
-                    ingredient.name + ", " + ingredient.count, color
-                    = Color.DarkGray
-                )
-                Row(
-                    Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.End
+        if (ingredient.name != "") {
+            Text(
+                ingredient.name + ", " + ingredient.count, color
+                = Color.DarkGray
+            )
+            Row(
+                Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                IconButton(
+                    onClick = {
+                        openEditDialog.value = !openEditDialog.value
+
+                    }, Modifier
+                        .padding(end = 14.dp)
+                        .size(25.dp)
                 ) {
-                    IconButton(
-                        onClick = {
-                            openEditDialog.value = !openEditDialog.value
-
-                        }, Modifier
-                            .padding(end = 14.dp)
-                            .size(25.dp)
-                    ) {
-                        Icon(
-                            Icons.Filled.Edit,
-                            "",
-                            tint = Color.DarkGray
-                        )
-                    }
-                    IconButton(
-                        onClick = {
-                            val newItem = category.copy(items = category.items.toMutableList().apply { remove(ingredient) })
-                            val index = categories.indexOf(category)
-                            categories[index] = newItem
-                            InventoryRepository.deleteIngredient(category, ingredient)
-                        }, Modifier.size
-                            (25.dp)
-                    ) {
-                        Icon(
-                            Icons.Filled.Delete,
-                            "",
-                            tint = Color.DarkGray
-                        )
-                    }
+                    Icon(
+                        Icons.Filled.Edit,
+                        "",
+                        tint = Color.DarkGray
+                    )
+                }
+                IconButton(
+                    onClick = {
+                        InventoryRepository.deleteIngredient(category, ingredient)
+                    }, Modifier.size
+                        (25.dp)
+                ) {
+                    Icon(
+                        Icons.Filled.Delete,
+                        "",
+                        tint = Color.DarkGray
+                    )
                 }
             }
-
-
         }
+
+
+    }
 
 }

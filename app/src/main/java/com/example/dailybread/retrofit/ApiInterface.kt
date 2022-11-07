@@ -1,12 +1,10 @@
 package com.example.dailybread.retrofit
 
+import com.example.dailybread.data.Ingredient
 import com.example.dailybread.data.Recipe
 import com.example.dailybread.user.User
 import retrofit2.Call
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.*
 
 //Retrofit interface to handle GET and POST requests
 interface ApiInterface {
@@ -24,7 +22,9 @@ interface ApiInterface {
 
 
     @GET("/recipes")
-    fun getRecipes():Call<List<Recipe>>
+    suspend fun getRecipes(): List<Recipe>
 
+    @GET("/recipes")
+    suspend fun getRecipesFromIngredients(@Query("q") ingredients: String): List<Recipe>
 
 }

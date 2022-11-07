@@ -10,10 +10,12 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -27,7 +29,6 @@ import com.example.dailybread.compose.MyModalDrawer
 import com.example.dailybread.compose.MyTopAppBar
 import com.example.dailybread.data.Category
 import com.example.dailybread.data.Ingredient
-import com.example.dailybread.data.mockItems
 import kotlinx.coroutines.launch
 
 
@@ -40,9 +41,8 @@ fun InventoryScreen(navController: NavController) {
             drawerState.open()
         }
     }
-    val inventory = InventoryRepository.getInventory().collectAsState(initial = mockItems)
     MyModalDrawer(drawerState, navController) {
-        val inventory = mockItems.toMutableStateList()
+        val inventory = InventoryRepository.getInventory()
         InventoryScreen(inventory, openDrawer = openDrawer, navController = navController)
     }
 
@@ -52,7 +52,7 @@ fun InventoryScreen(navController: NavController) {
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun InventoryScreen(
-    categories: SnapshotStateList<Category>,
+    categories: MutableList<Category>,
     openDrawer: () -> Unit, navController: NavController) {
     Scaffold(topBar = {
         MyTopAppBar(title = "Inventory",
@@ -83,11 +83,11 @@ fun InventoryScreen(
         ) {
             LazyColumn(
                 Modifier.align(
-                    Center
+                    TopCenter
                 )
             ) {
                 items(categories) { item ->
-                   InventoryCard(categories, item)
+                   InventoryCard(item)
                 }
             }
         }
@@ -95,7 +95,7 @@ fun InventoryScreen(
     }
 }
 @Composable
-fun InventoryCard(categories: SnapshotStateList<Category>, category: Category) {
+fun InventoryCard(category: Category) {
     Card(
         Modifier
             .padding(20.dp, 10.dp)

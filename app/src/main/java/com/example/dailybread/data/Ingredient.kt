@@ -1,5 +1,10 @@
 package com.example.dailybread.data
 
-data class Ingredient(var name: String?, var count: String?)
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
+data class Ingredient(@PrimaryKey val name: String, @ColumnInfo val count: String)
 
 

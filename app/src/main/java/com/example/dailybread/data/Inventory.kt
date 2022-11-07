@@ -1,12 +1,15 @@
 package com.example.dailybread.data
 
-class Inventory(ingList: List<Category>)
+import androidx.compose.runtime.toMutableStateList
 
-val mockSpiceInventory = mutableListOf(
+data class Inventory(val ingList: List<Category>)
+data class Category(val title: String, val items: MutableList<Ingredient>)
+
+private val mockSpiceInventory = listOf(
     Ingredient("Salt", "1 LB"),
     Ingredient("Pepper", "3 Oz")
-)
-val mockVegiInventory = mutableListOf(
+).toMutableStateList()
+private val mockVegiInventory = listOf(
     Ingredient("Tomatoes", "3"),
     Ingredient("Cucumbers", "3"),
     Ingredient("Carrots", "3"),
@@ -17,18 +20,14 @@ val mockVegiInventory = mutableListOf(
     Ingredient("Garlic", "1"),
     Ingredient("Mushrooms", "6"),
 
-)
-val mockProteinInventory = mutableListOf(
+).toMutableStateList()
+private val mockProteinInventory = listOf(
     Ingredient("Chicken Breast", "3 LB"),
     Ingredient("Tofu", "1 LB"),
-)
+).toMutableStateList()
 val mockInventorySpiceItem =  Category("Spice", mockSpiceInventory)
 val mockInventoryVegiItem =  Category("Vegetables", mockVegiInventory)
 val mockInventoryProteinItem =  Category("Protein", mockProteinInventory)
 val mockItems = mutableListOf(mockInventorySpiceItem, mockInventoryVegiItem,
     mockInventoryProteinItem)
-
-
-
-data class Category(val title: String, val items: MutableList<Ingredient>)
 

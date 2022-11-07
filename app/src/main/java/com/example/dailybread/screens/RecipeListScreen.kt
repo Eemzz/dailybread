@@ -35,7 +35,7 @@ fun RecipeListScreen(navController: NavController) {
         }
     }
     MyModalDrawer(drawerState, navController) {
-        RecipeListScreen(RecipeRepository.recipes, openDrawer, navController)
+        RecipeListScreen(RecipeRepository.recipes.values.toList(), openDrawer, navController)
 
 
     }
