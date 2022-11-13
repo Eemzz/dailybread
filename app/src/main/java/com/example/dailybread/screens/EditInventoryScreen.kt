@@ -11,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -22,7 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.dailybread.InventoryRepository
+import com.example.dailybread.data.InventoryRepository
 import com.example.dailybread.R
 import com.example.dailybread.compose.*
 import com.example.dailybread.data.Category
@@ -30,6 +29,7 @@ import com.example.dailybread.data.Ingredient
 import com.example.dailybread.data.Inventory
 import com.example.dailybread.datastore.InventoryStore
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 
 @Composable
@@ -57,11 +57,22 @@ fun EditInventoryScreen(
     val openAddCategoryDialog = remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    var position: FabPosition = FabPosition.End
+    val move = remember { mutableStateOf(false) }
+
+   if(!move.value){
+       position = FabPosition.End
+    }
+    else{
+       position =  FabPosition.Center
+
+    }
+
     Scaffold(topBar = {
         MyTopAppBar(title = "Edit Inventory",
             buttonIcon = Icons.Filled.Menu,
             onButtonClicked = { openDrawer() })
-    },
+    },floatingActionButtonPosition = position,
         floatingActionButton = {
 
             FloatingActionButton(
@@ -76,6 +87,7 @@ fun EditInventoryScreen(
             ) {
                 Icon(Icons.Filled.Save, "")
             }
+
         }
     ) {
         Box(
@@ -83,25 +95,46 @@ fun EditInventoryScreen(
                 .fillMaxSize()
                 .background(Color(0xFFFCF7EC))
         ) {
-            LazyColumn(Modifier.align(Alignment.TopCenter).padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(10.dp) ) {
+            LazyColumn(
+                Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(20.dp) ) {
                 item {
-                    DBButton(btnText = "Add category", modifier = Modifier.fillMaxWidth()) {
-                        openAddCategoryDialog.value = !openAddCategoryDialog.value
+                    Button(
+                        modifier = Modifier
+                            .padding(top = 20.dp)
+                            .fillMaxSize(),
+                        onClick = { openAddCategoryDialog.value = !openAddCategoryDialog.value },
+                        shape = RoundedCornerShape(15),
+                        colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
+                    ) {
+                        Text(
+                            text = "New Category", modifier = Modifier, color = Color.White,
+                            fontSize
+                            = 10.sp
+                        )
                     }
+
                 }
                 items(categories) { item ->
+                    LaunchedEffect(true){
+                        move.value = false
+                    }
+
                     EditInventoryCard(item)
+                }
+                item {
+
+                    LaunchedEffect(true) {
+                        move.value = true
+                    }
+
                 }
             }
             if (openAddCategoryDialog.value) {
                 AddCategoryDialog(openAddCategoryDialog, categories)
             }
 
-//            if (openEditDialog.value) {
-//                Dialog() {
-//                    EditIngredient(openEditDialog, ingredient, )
-//                }
-//            }
         }
 
     }
@@ -113,11 +146,12 @@ fun EditInventoryCard(category: Category) {
     val openEditDialog = remember { mutableStateOf(false) }
     val openAddDialog = remember { mutableStateOf(false) }
     val openDeleteDialog = remember { mutableStateOf(false) }
+
     Card(
         Modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape
-            (5)
+            (10.dp)
     ) {
 
         Column(Modifier.padding(PaddingValues(16.dp))) {
@@ -184,9 +218,6 @@ fun EditInventoryCard(category: Category) {
         }
     }
 
-//
-
-
 }
 
 
@@ -194,7 +225,8 @@ fun EditInventoryCard(category: Category) {
 fun IngredientRow(
     ingredient: Ingredient,
     category: Category,
-    openEditDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
+    openEditDialog: MutableState<Boolean> = remember { mutableStateOf(false) },
+
 ) {
 
     Row(

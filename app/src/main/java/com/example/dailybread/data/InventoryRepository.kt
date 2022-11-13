@@ -1,11 +1,7 @@
-package com.example.dailybread
+package com.example.dailybread.data
 
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
-import com.example.dailybread.data.Ingredient
-import com.example.dailybread.data.Category
-import com.example.dailybread.data.mockItems
-import kotlinx.coroutines.flow.*
 
 object InventoryRepository {
 
@@ -13,7 +9,7 @@ object InventoryRepository {
 
 
     private val inventory = SnapshotStateList<Category>()
-//        .apply { addAll(mockItems) }
+    //    .apply { addAll(mockItems) }
     fun getInventory(): MutableList<Category> = inventory
     fun setInventory(categories: List<Category>) {
         inventory.clear()
