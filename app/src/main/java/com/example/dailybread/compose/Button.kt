@@ -19,7 +19,8 @@ import com.example.dailybread.R
 @Composable
 fun DBButton(btnText: String, modifier: Modifier = Modifier
     .width(120.dp)
-    .height(50.dp), onclick: () -> Unit) {
+    .height(50.dp),onclick: () -> Unit
+) {
     Box{
         Button(
             onClick = onclick,

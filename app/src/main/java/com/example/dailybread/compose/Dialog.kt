@@ -23,10 +23,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.dailybread.InventoryRepository.addCategory
-import com.example.dailybread.InventoryRepository.addIngredient
-import com.example.dailybread.InventoryRepository.editIngredient
-import com.example.dailybread.InventoryRepository.removeCategory
+import com.example.dailybread.data.InventoryRepository.addCategory
+import com.example.dailybread.data.InventoryRepository.addIngredient
+import com.example.dailybread.data.InventoryRepository.editIngredient
+import com.example.dailybread.data.InventoryRepository.removeCategory
 import com.example.dailybread.data.Category
 import com.example.dailybread.data.Ingredient
 import com.example.dailybread.data.Recipe
@@ -529,7 +529,9 @@ fun AddCategoryDialog(openDialog: MutableState<Boolean>, categories: MutableList
                         val newCategory =
                             Category(NewCategoryTextState.value.text, mutableListOf())
 
-                        categories.add(newCategory)
+                        //it was adding twice
+                       // categories.add(newCategory)
+
                         addCategory(newCategory)
                     },
                     shape = RoundedCornerShape(50),

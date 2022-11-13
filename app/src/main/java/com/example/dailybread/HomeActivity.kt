@@ -11,7 +11,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.example.dailybread.compose.MyAppNavHost
-import com.example.dailybread.user.isOnline
+import com.example.dailybread.data.InventoryRepository
+//import com.example.dailybread.user.isOnline
 import com.example.dailybread.datastore.InventoryStore
 import com.example.dailybread.ui.theme.DailyBreadTheme
 import kotlinx.coroutines.Dispatchers
