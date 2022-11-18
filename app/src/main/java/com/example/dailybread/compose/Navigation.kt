@@ -44,5 +44,8 @@ fun MyAppNavHost(
         composable("recipeList") {
             RecipeListScreen(navController)
         }
+        composable("Logout"){
+            LoginScreen(navController)
+        }
     }
 }

@@ -18,15 +18,15 @@ import kotlinx.coroutines.launch
 sealed class DrawerScreens(val title: String, val route: String) {
     object Home : DrawerScreens("Home", "home")
     object Inventory : DrawerScreens("Inventory", "inventory")
-   // object EditInventory : DrawerScreens("Edit Inventory", "edit")
     object Account : DrawerScreens( "Account", "account")
+    object Logout : DrawerScreens( "Log out", "logout")
 }
 
 private val screens = listOf(
     DrawerScreens.Home,
     DrawerScreens.Inventory,
-   // DrawerScreens.EditInventory,
-    DrawerScreens.Account
+    DrawerScreens.Account,
+    DrawerScreens.Logout
 
 )
 

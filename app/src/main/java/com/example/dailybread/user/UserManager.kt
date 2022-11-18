@@ -16,7 +16,7 @@ import retrofit2.Response
 
 object UserManager {
     //TODO remove for session management
-    var isUserLoggedIn = false
+    var isUserLoggedIn = true
     var errorMessage = "";
     var registered = mutableStateOf(false)
     var username = "";

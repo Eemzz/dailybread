@@ -59,32 +59,42 @@ fun RecipeListScreen(
                 .fillMaxSize()
                 .background(Color(0xFFFCF7EC))
         ) {
+            if(recipes.isEmpty()){
+                Column(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(16.dp), horizontalAlignment = CenterHorizontally) {
+                    Text(text = "Could not generate a recipe with your current inventory", color = Color.DarkGray)
+                }
+            }else{
+                LazyColumn {
+                    item() {
+                        recipes.forEach {
+                            Card(
+                                Modifier
+                                    .padding(20.dp, 10.dp)
+                                    .width(300.dp)
+                                    .clickable {
+                                        //TODO ideally this should navigate to recipe screen with recipe as param
+                                        RecipeRepository.id = it.id
+                                        navController.navigate("recipe")
 
-            LazyColumn {
-                item() {
-                    recipes.forEach {
-                        Card(
-                            Modifier
-                                .padding(20.dp, 10.dp)
-                                .width(300.dp)
-                                .clickable {
-                                    //TODO ideally this should navigate to recipe screen with recipe as param
-                                    RecipeRepository.id = it.id
-                                    navController.navigate("recipe")
+                                    }
+                                    .fillMaxHeight(),
+                                shape = RoundedCornerShape
+                                    (5)
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(16.dp),
+                                    horizontalAlignment = CenterHorizontally
+                                ) {
+                                    Text(it.name, color = Color.DarkGray, fontSize = 20.sp)
 
                                 }
-                                .fillMaxHeight(),
-                            shape = RoundedCornerShape
-                                (5)
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(16.dp),
-                                horizontalAlignment = CenterHorizontally
-                            ) {
-                                Text(it.name, color = Color.DarkGray, fontSize = 20.sp)
 
                             }
-                            
+
+
                         }
 
 
@@ -92,9 +102,8 @@ fun RecipeListScreen(
 
 
                 }
-
-
             }
+
 
         }
 
