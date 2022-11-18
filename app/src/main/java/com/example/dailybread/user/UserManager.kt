@@ -87,15 +87,19 @@ object UserManager {
             registered.value = true
         }*/
 
-        wait()
+        waitRegister()
 
         println("registered? " + registered.value.toString())
         //return registered.value
         registered.value
     }
 
-    suspend fun wait() {
+    suspend fun waitRegister() {
         delay(4000)
+    }
+
+    suspend fun waitLogin() {
+        delay(1500)
     }
 
     /*suspend fun makeRegReq(name: String, email: String, password: String) : Response<DefaultResponse> {
@@ -128,7 +132,7 @@ object UserManager {
         return result
     }*/
 
-    fun loginUser(email: String, password: String): Boolean {
+    fun loginUser(email: String, password: String): Boolean = runBlocking{
 
         Retro.instance.loginUser(email, password)
             .enqueue(object: Callback<DefaultResponse> {
@@ -156,7 +160,9 @@ object UserManager {
 
             })
 
-        return isUserLoggedIn
+        waitLogin()
+
+        isUserLoggedIn
     }
 
     fun getUserEmail(): String {

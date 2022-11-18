@@ -14,6 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +35,9 @@ import com.example.dailybread.user.UserManager
 import com.example.dailybread.compose.DBButton
 import com.example.dailybread.compose.DBLogo
 import com.example.dailybread.compose.DBTextField
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun LoginScreen(navController: NavController) {
@@ -41,6 +45,10 @@ fun LoginScreen(navController: NavController) {
         remember { mutableStateOf(TextFieldValue()) }
     val passwordTextState =
         remember { mutableStateOf(TextFieldValue()) }
+    val openDialog = remember { mutableStateOf(false) }
+    val load = remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val logged =  remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -116,10 +124,25 @@ fun LoginScreen(navController: NavController) {
                                     ) {
                                         //TODO verify user
                                         println("email entered: " + emailTextState.value.text)
-                                        if (UserManager.loginUser(emailTextState.value.text, passwordTextState.value.text))
-                                        {
-                                            navController.navigate("home")
+                                        scope.launch(Dispatchers.Main) {
+                                            load.value=true
+                                            withContext(Dispatchers.IO) {
+                                                logged.value = UserManager.loginUser(emailTextState.value.text, passwordTextState.value.text)
+                                                /*if (UserManager.loginUser(emailTextState.value.text, passwordTextState.value.text))
+                                                {
+                                                    navController.navigate("home")
+                                                }*/
+                                            }
+                                            load.value=false
+                                            if (logged.value)
+                                            {
+                                                navController.navigate("home")
+                                            }
+                                            else{
+                                                openDialog.value = !openDialog.value
+                                            }
                                         }
+
 
 
                                     }
@@ -136,7 +159,13 @@ fun LoginScreen(navController: NavController) {
 
             }
         }
-
+        if(load.value){
+            Loading()
+        }
+        if (openDialog.value)
+        {
+            ErrorMessageDialog(openDialog = openDialog, message = UserManager.errorMessage)
+        }
 
     }
 }
