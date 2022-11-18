@@ -1,4 +1,4 @@
-package com.example.dailybread.compose
+package com.example.dailybread.screens
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController

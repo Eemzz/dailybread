@@ -5,6 +5,8 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.example.dailybread.retrofit.DefaultResponse
+import android.util.Log
+import com.example.dailybread.data.*
 import com.example.dailybread.retrofit.Retro
 import retrofit2.Call
 import retrofit2.Callback
@@ -71,6 +73,8 @@ object UserManager {
                 }
 
             })
+
+        return null
     }
 
 

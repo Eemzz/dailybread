@@ -1,20 +1,22 @@
-package com.example.dailybread.compose
+package com.example.dailybread.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -22,11 +24,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.dailybread.InventoryRepository
+import com.example.dailybread.data.InventoryRepository
 import com.example.dailybread.R
+import com.example.dailybread.compose.MyModalDrawer
+import com.example.dailybread.compose.MyTopAppBar
 import com.example.dailybread.data.Category
 import com.example.dailybread.data.Ingredient
-import com.example.dailybread.data.mockItems
 import kotlinx.coroutines.launch
 
 
@@ -39,18 +42,18 @@ fun InventoryScreen(navController: NavController) {
             drawerState.open()
         }
     }
-    val inventory = InventoryRepository.getInventory().collectAsState(initial = mockItems)
     MyModalDrawer(drawerState, navController) {
-        val inventory = mockItems.toMutableStateList()
+        val inventory = InventoryRepository.getInventory()
         InventoryScreen(inventory, openDrawer = openDrawer, navController = navController)
     }
 
 
 }
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun InventoryScreen(
-    categories: SnapshotStateList<Category>,
+    categories: MutableList<Category>,
     openDrawer: () -> Unit, navController: NavController) {
     Scaffold(topBar = {
         MyTopAppBar(title = "Inventory",
@@ -80,12 +83,19 @@ fun InventoryScreen(
                 .background(Color(0xFFFCF7EC))
         ) {
             LazyColumn(
-                Modifier.align(
-                    Center
-                )
+                Modifier.align(Alignment.TopCenter).padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(20.dp)
+
             ) {
+                item {
+                    if(InventoryRepository.isUnSaved){
+                        Text(text = "You have unsaved changes to your inventory.", color = Color.Red,
+                            modifier = Modifier
+                                .padding(top = 20.dp)
+                                .clickable{navController.navigate("edit")})
+                    }
+                }
                 items(categories) { item ->
-                   InventoryCard(categories, item)
+                   InventoryCard(item)
                 }
             }
         }
@@ -93,30 +103,25 @@ fun InventoryScreen(
     }
 }
 @Composable
-fun InventoryCard(categories: SnapshotStateList<Category>, category: Category) {
+fun InventoryCard(category: Category) {
     Card(
         Modifier
-            .padding(20.dp, 10.dp)
-            .width(300.dp)
-            .fillMaxHeight(),
+            .fillMaxWidth(),
         shape = RoundedCornerShape
-            (5)
+            (10.dp)
     ) {
 
 
         Column(Modifier.padding( PaddingValues(16.dp))) {
-            Column(
-                Modifier.fillMaxSize(),
-                horizontalAlignment =
-                CenterHorizontally
-            ) {
-                Text(
-                    text = "\n" + category.title + "\n",
-                    fontSize = 20.sp,
-                    color = Color.DarkGray,
-                    textAlign = TextAlign.Center
-                )
-            }
+
+            Text(
+                modifier = Modifier.align(CenterHorizontally),
+                text = "\n" + category.title + "\n",
+                fontSize = 20.sp,
+                color = Color.DarkGray,
+                textAlign = TextAlign.Center
+            )
+
             category.items.forEach { ingredient ->
                 Text(
                     ingredient.name + ", " + ingredient.count, color
@@ -130,20 +135,4 @@ fun InventoryCard(categories: SnapshotStateList<Category>, category: Category) {
     }
 }
 
-@Composable
-fun IngredientDisplayRow(
-    ingredient: Ingredient,
-    categories: SnapshotStateList<Category>,
-    category: Category,
-) {
 
-    Text(
-        ingredient.name + ", " + ingredient.count, color
-        = Color.DarkGray
-    )
-
-
-
-
-
-}

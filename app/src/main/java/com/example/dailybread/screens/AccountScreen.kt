@@ -1,7 +1,7 @@
-package com.example.dailybread.compose
+package com.example.dailybread.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,7 +16,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
@@ -27,12 +26,16 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import com.example.dailybread.compose.ChangePasswordDialog
+import com.example.dailybread.compose.DBTextField
+import com.example.dailybread.compose.MyModalDrawer
+import com.example.dailybread.compose.MyTopAppBar
+import com.example.dailybread.user.UserManager.userEmail
+import com.example.dailybread.user.UserManager.username
 //import com.example.dailybread.user.ChangePassword
 
 import kotlinx.coroutines.launch
+
 
 @Composable
 fun AccountScreen(navController: NavController) {
@@ -47,15 +50,18 @@ fun AccountScreen(navController: NavController) {
         AccountScreen(openDrawer = openDrawer)
     }
 }
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun AccountScreen(openDrawer: () -> Unit){
     val context = LocalContext.current
     val openDialog = remember {
         mutableStateOf(false)
     }
-    Scaffold(topBar = {MyTopAppBar(title = "Account",
+    Scaffold(topBar = {
+        MyTopAppBar(title = "Account",
         buttonIcon = Icons.Filled.Menu,
-        onButtonClicked = { openDrawer() })}) {
+        onButtonClicked = { openDrawer() })
+    }) {
         Box(
             Modifier
                 .fillMaxSize()
@@ -82,11 +88,11 @@ fun AccountScreen(openDrawer: () -> Unit){
                             }
 
 
-                                Text(text = "Username", color = Color.DarkGray, fontSize = 20.sp) //TODO make this display username
+                                Text(text = username, color = Color.DarkGray, fontSize = 20.sp) //TODO make this display username
 
 
 
-                                Text(text ="Email", color = Color.DarkGray, fontSize = 20.sp) //TODO make this display email
+                                Text(text = userEmail, color = Color.DarkGray, fontSize = 20.sp) //TODO make this display email
 
                             Column(
                                 Modifier

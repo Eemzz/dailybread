@@ -1,11 +1,9 @@
-package com.example.dailybread.compose
+package com.example.dailybread.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -28,8 +27,16 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.dailybread.data.InventoryRepository.getIngredientsString
 import com.example.dailybread.R
+import com.example.dailybread.compose.*
+import com.example.dailybread.data.Inventory
+import com.example.dailybread.data.InventoryRepository.isUnSaved
+import com.example.dailybread.data.RecipeManager.getRecipesFromIng
+import com.example.dailybread.datastore.InventoryStore
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -46,9 +53,18 @@ fun HomeScreen(navController: NavController) {
         HomeScreen(openDrawer = openDrawer, navController = navController)
     }
 }
+
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(navController: NavController,
-               openDrawer: () -> Unit) {
+               openDrawer: () -> Unit,
+                ) {
+    val ingListTextState =
+        remember { mutableStateOf(TextFieldValue()) }
+    val load = remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
     Scaffold(topBar = { MyTopAppBar(title = "Home",
         buttonIcon = Icons.Filled.Menu,
         onButtonClicked = { openDrawer() }) }) {
@@ -63,11 +79,18 @@ fun HomeScreen(navController: NavController,
                 contentScale = ContentScale.FillBounds
             )
             LazyColumn {
+
                 item {
                     Column(
                         Modifier.fillMaxSize(), horizontalAlignment = Alignment
                             .CenterHorizontally
                     ) {
+                        if(isUnSaved){
+                            Text(text = "You have unsaved changes to your inventory.", color = Color.Red,
+                            modifier = Modifier
+                                .padding(top = 20.dp)
+                                .clickable{navController.navigate("edit")})
+                        }
                         Card(
                             backgroundColor = Color.White.copy(alpha = 0.75f), shape =
                             RoundedCornerShape(10), modifier =
@@ -89,8 +112,7 @@ fun HomeScreen(navController: NavController,
                                 )
 
                                 Column {
-                                    val ingListTextState =
-                                        remember { mutableStateOf(TextFieldValue()) }
+
                                     DBTextField(
                                         "Tomatoes, basil, ground beef, etc",
                                         KeyboardOptions(
@@ -106,8 +128,17 @@ fun HomeScreen(navController: NavController,
                                         btnText =
                                         "Search"
                                     ) {
-                                        //TODO HTTP call
-                                        navController.navigate("recipeList")
+//
+                                        val ingredients = ingListTextState.value.text
+                                        scope.launch(Dispatchers.Main) {
+                                            load.value = true
+                                            withContext(Dispatchers.IO) {
+                                                getRecipesFromIng(ingredients)
+                                            }
+                                            load.value = false
+                                            navController.navigate("recipeList")
+                                        }
+
                                     }
                                 }
                             }
@@ -136,7 +167,15 @@ fun HomeScreen(navController: NavController,
                                         btnText = "Generate"
                                     ) {
                                         //TODO make api call
-                                        navController.navigate("recipe")
+                                        scope.launch(Dispatchers.Main) {
+                                            load.value = true
+                                            withContext(Dispatchers.IO) {
+                                                getRecipesFromIng(getIngredientsString())
+                                               // getRecipes()
+                                            }
+                                            load.value = false
+                                            navController.navigate("recipeList")
+                                        }
                                     }
                                 }
                                 Column(
@@ -146,7 +185,7 @@ fun HomeScreen(navController: NavController,
 
 
                                     Text(
-                                        text = "Generates a recipe from your inventory",
+                                        text = "Generates recipes from your inventory",
                                         fontSize = 14
                                             .sp, color =
                                         Color
@@ -181,6 +220,9 @@ fun HomeScreen(navController: NavController,
 
             }
 
+            if(load.value){
+                Loading()
+            }
 
         }
     }

@@ -4,15 +4,15 @@ import androidx.compose.runtime.Composable
 import java.io.IOException
 
 data class Recipe(
+    val id: Int,
     val name: String,
     val ingredients: List<String>,
     val instructions: List<String>
 )
 
 
-
-
 val spaghetti = Recipe(
+    1,
     "Spaghetti",
     listOf(
         "1 pound ground beef (or ½ lb ground Italian sausage and ½ lb ground beef)",
@@ -39,6 +39,7 @@ val spaghetti = Recipe(
     )
 )
 val fettuccine = Recipe(
+    2,
     "Fettuccine Alfredo",
     listOf(
         "1 lb Fettuccine Pasta",
@@ -60,6 +61,7 @@ val fettuccine = Recipe(
     )
 )
 val biryani = Recipe(
+    2,
     "Biryani",
     listOf(
         "2 pounds (910g) boneless leg of lamb, trimmed of excess fat and cut into 1-inch (2cm) cubes",
