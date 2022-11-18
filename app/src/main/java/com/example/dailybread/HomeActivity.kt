@@ -35,7 +35,7 @@ class HomeActivity: ComponentActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             //TODO get inventory from api only fetch from disk if no internet or call fails
           //  if(!isOnline(context = this@HomeActivity)){
-                InventoryRepository.setInventory(InventoryStore.readInventory(this@HomeActivity).ingList)
+                //InventoryRepository.setInventory(InventoryStore.readInventory(this@HomeActivity).ingList)
           //  }
 
         }

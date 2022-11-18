@@ -30,8 +30,9 @@ import com.example.dailybread.compose.ChangePasswordDialog
 import com.example.dailybread.compose.DBTextField
 import com.example.dailybread.compose.MyModalDrawer
 import com.example.dailybread.compose.MyTopAppBar
-import com.example.dailybread.user.UserManager.userEmail
-import com.example.dailybread.user.UserManager.username
+import com.example.dailybread.user.UserManager
+//import com.example.dailybread.user.UserManager.userEmail
+//import com.example.dailybread.user.UserManager.username
 //import com.example.dailybread.user.ChangePassword
 
 import kotlinx.coroutines.launch
@@ -88,11 +89,11 @@ fun AccountScreen(openDrawer: () -> Unit){
                             }
 
 
-                                Text(text = username, color = Color.DarkGray, fontSize = 20.sp) //TODO make this display username
+                                Text(text = UserManager.getUserName(), color = Color.DarkGray, fontSize = 20.sp) //TODO make this display username
 
 
 
-                                Text(text = userEmail, color = Color.DarkGray, fontSize = 20.sp) //TODO make this display email
+                                Text(text = UserManager.getUserEmail(), color = Color.DarkGray, fontSize = 20.sp) //TODO make this display email
 
                             Column(
                                 Modifier

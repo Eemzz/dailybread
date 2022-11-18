@@ -15,6 +15,7 @@ import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -34,7 +35,10 @@ import com.example.dailybread.compose.DBButton
 import com.example.dailybread.compose.DBLogo
 import com.example.dailybread.compose.DBTextField
 import com.example.dailybread.user.UserManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.Dispatcher
 
 @Composable
@@ -48,6 +52,9 @@ fun SignUpScreen(navController: NavController) {
     val passwordTextState =
         remember { mutableStateOf(TextFieldValue()) }
     val openDialog = remember { mutableStateOf(false) }
+    val load = remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val registered =  remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -136,7 +143,28 @@ fun SignUpScreen(navController: NavController) {
                                         println("email entered: " + emailTextState.value.text)
                                         if (passwordTextState.value.text == confirmTextState.value.text)
                                         {
-                                            if (UserManager.createUser(
+                                            scope.launch(Dispatchers.Main) {
+                                                load.value=true
+                                                withContext(Dispatchers.IO) {
+                                                    registered.value = UserManager.createUser(nameTextState.value.text, emailTextState.value.text, passwordTextState.value.text)
+                                                }
+
+                                                load.value=false
+                                                println("after coroutine: " + registered.value.toString())
+                                                if (registered.value)
+                                                {
+                                                    navController.navigate("home")
+                                                }
+                                                else{
+                                                    openDialog.value = !openDialog.value
+                                                }
+                                            }
+                                            /*println("after coroutin: " + registered.value.toString())
+                                            if (registered.value)
+                                            {
+                                                navController.navigate("home")
+                                            }*/
+                                            /*if (UserManager.createUser(
                                                     nameTextState.value.text,
                                                     emailTextState.value.text,
                                                     passwordTextState.value.text))
@@ -145,8 +173,9 @@ fun SignUpScreen(navController: NavController) {
                                                 navController.navigate("home")
                                             }
                                             else{
+                                                println("open dialog")
                                                 openDialog.value = !openDialog.value
-                                            }
+                                            }*/
 
 
                                         }
@@ -171,7 +200,13 @@ fun SignUpScreen(navController: NavController) {
 
             }
         }
-
+        if(load.value){
+            Loading()
+        }
+        if (openDialog.value)
+        {
+            ErrorMessageDialog(openDialog = openDialog, message = UserManager.errorMessage)
+        }
 
     }
 }

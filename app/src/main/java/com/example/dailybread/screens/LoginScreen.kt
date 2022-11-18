@@ -115,8 +115,13 @@ fun LoginScreen(navController: NavController) {
                                         btnText = "Log in"
                                     ) {
                                         //TODO verify user
-                                        UserManager.loginUser(emailTextState.value.text, passwordTextState.value.text)
-                                        navController.navigate("home")
+                                        println("email entered: " + emailTextState.value.text)
+                                        if (UserManager.loginUser(emailTextState.value.text, passwordTextState.value.text))
+                                        {
+                                            navController.navigate("home")
+                                        }
+
+
                                     }
                                 }
 
