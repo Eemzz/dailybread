@@ -1,5 +1,8 @@
 package com.example.dailybread.compose
 
+import android.app.AlertDialog
+import android.app.Dialog
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +30,8 @@ import androidx.navigation.NavController
 import com.example.dailybread.R
 import com.example.dailybread.user.User
 import com.example.dailybread.user.UserManager
+import kotlinx.coroutines.Dispatchers.IO
+import okhttp3.Dispatcher
 
 @Composable
 fun SignUpScreen(navController: NavController) {
@@ -38,6 +43,9 @@ fun SignUpScreen(navController: NavController) {
         remember { mutableStateOf(TextFieldValue()) }
     val passwordTextState =
         remember { mutableStateOf(TextFieldValue()) }
+    val openDialog = remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.appbg1),
@@ -119,15 +127,22 @@ fun SignUpScreen(navController: NavController) {
                                         btnText = "Register"
                                     ) {
                                         //TODO add user to data base
+                                        println("email entered: " + emailTextState.value.text)
                                         if (passwordTextState.value.text == confirmTextState.value.text)
                                         {
-                                            UserManager.createUser(
-                                                nameTextState.value.text,
-                                                emailTextState.value.text,
-                                                passwordTextState.value.text
-                                            )
-                                            UserManager.isUserLoggedIn = true
-                                            navController.navigate("home")
+                                            if (UserManager.createUser(
+                                                    nameTextState.value.text,
+                                                    emailTextState.value.text,
+                                                    passwordTextState.value.text))
+                                            {
+                                                UserManager.isUserLoggedIn = true
+                                                navController.navigate("home")
+                                            }
+                                            else{
+                                                openDialog.value = !openDialog.value
+                                            }
+
+
                                         }
 
                                         //var user = UserManager.createuser(UserManager.userInfo)
@@ -150,7 +165,10 @@ fun SignUpScreen(navController: NavController) {
 
             }
         }
-
+        if (openDialog.value)
+        {
+            ErrorMessageDialog(openDialog = openDialog, message = UserManager.errorMessage)
+        }
 
     }
 }

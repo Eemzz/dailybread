@@ -31,9 +31,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.dailybread.R
+import com.example.dailybread.user.UserManager
 
 @Composable
 fun LoginScreen(navController: NavController) {
+    val emailTextState =
+        remember { mutableStateOf(TextFieldValue()) }
+    val passwordTextState =
+        remember { mutableStateOf(TextFieldValue()) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -67,10 +72,6 @@ fun LoginScreen(navController: NavController) {
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Column(Modifier.padding(20.dp)) {
-                                    val emailTextState =
-                                        remember { mutableStateOf(TextFieldValue()) }
-                                    val passwordTextState =
-                                        remember { mutableStateOf(TextFieldValue()) }
                                     DBTextField(
                                         "Enter Your Email",
                                         KeyboardOptions(
@@ -111,6 +112,7 @@ fun LoginScreen(navController: NavController) {
                                         btnText = "Log in"
                                     ) {
                                         //TODO verify user
+                                        UserManager.loginUser(emailTextState.value.text, passwordTextState.value.text)
                                         navController.navigate("home")
                                     }
                                 }

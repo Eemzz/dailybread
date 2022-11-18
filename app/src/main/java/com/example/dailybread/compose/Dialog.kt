@@ -626,3 +626,73 @@ fun AddCategoryContent(openDialog: MutableState<Boolean>) {
         }
     }
 }
+
+@Composable
+fun ErrorMessageDialog(openDialog: MutableState<Boolean>, message: String) {
+
+    AlertDialog(
+        shape = RoundedCornerShape
+            (5),
+        onDismissRequest = {
+            openDialog.value = false
+        },
+        title = {
+            Column(
+                Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Cannot register user", color
+                    = Color.DarkGray, fontSize = 20.sp
+                )
+            }
+        },
+        text = {
+            Column(
+                Modifier
+                    .padding(top = 16.dp)
+                    .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = message,
+                    color
+                    = Color.DarkGray
+                )
+            }
+
+
+        },
+
+        buttons = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(50.dp)
+                        .padding(5.dp),
+                    onClick = {
+                        openDialog.value = false
+                    },
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
+                ) {
+                    Text(
+                        text = "Ok", modifier = Modifier, color = Color.White,
+                        fontSize
+                        = 15.sp
+                    )
+                }
+            }
+
+        },
+
+        )
+
+
+}

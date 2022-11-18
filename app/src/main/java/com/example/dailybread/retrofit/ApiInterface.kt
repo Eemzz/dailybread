@@ -14,10 +14,17 @@ interface ApiInterface {
     fun getData(): Call<User>
 
     @FormUrlEncoded
-    @POST ("registeruser")
+    @POST ("auth/registeruser")
     fun registerUser(
         @Field("name") name:String,
         @Field("email") email:String,
         @Field("password") password:String,
+    ): Call<DefaultResponse>
+
+    @FormUrlEncoded
+    @POST ("auth/loginuser")
+    fun loginUser(
+        @Field("email") email: String,
+        @Field("password") password: String,
     ): Call<User>
 }
