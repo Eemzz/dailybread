@@ -75,7 +75,7 @@ fun RecipeListScreen(
                                     .padding(20.dp, 10.dp)
                                     .width(300.dp)
                                     .clickable {
-                                        //TODO ideally this should navigate to recipe screen with recipe as param
+
                                         RecipeRepository.id = it.id
                                         navController.navigate("recipe")
 

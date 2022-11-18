@@ -122,7 +122,7 @@ fun LoginScreen(navController: NavController) {
                                     DBButton(
                                         btnText = "Log in"
                                     ) {
-                                        //TODO verify user
+
                                         println("email entered: " + emailTextState.value.text)
                                         scope.launch(Dispatchers.Main) {
                                             load.value=true

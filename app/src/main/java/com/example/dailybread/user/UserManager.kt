@@ -16,7 +16,7 @@ import retrofit2.Response
 
 object UserManager {
     //TODO remove for session management
-    var isUserLoggedIn = true
+    var isUserLoggedIn = false
     var errorMessage = "";
     var registered = mutableStateOf(false)
     var username = "";
@@ -47,6 +47,7 @@ object UserManager {
                     //  withContext(Dispatchers.IO) {
                     if (fromBackend == "registered") {
                         setMessage("")
+                        isUserLoggedIn = true
                         registered.value = true
                     } else {
                         //println("frombackend != registered")
@@ -143,6 +144,7 @@ object UserManager {
                     if (fromBackend == "logged in")
                     {
                         setMessage("")
+                        useremail = email
                         isUserLoggedIn = true
                     }
                     else {

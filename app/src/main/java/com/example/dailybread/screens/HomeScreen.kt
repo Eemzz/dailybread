@@ -78,13 +78,10 @@ fun HomeScreen(navController: NavController,
                     .rotate(180f),
                 contentScale = ContentScale.FillBounds
             )
-            LazyColumn {
+            LazyColumn(contentPadding = PaddingValues(16.dp)) {
 
                 item {
-                    Column(
-                        Modifier.fillMaxSize(), horizontalAlignment = Alignment
-                            .CenterHorizontally
-                    ) {
+
                         if(isUnSaved){
                             Text(text = "You have unsaved changes to your inventory.", color = Color.Red,
                             modifier = Modifier
@@ -95,13 +92,13 @@ fun HomeScreen(navController: NavController,
                             backgroundColor = Color.White.copy(alpha = 0.75f), shape =
                             RoundedCornerShape(10), modifier =
                             Modifier
-                                .padding(20.dp)
+                                .padding(bottom = 16.dp)
                                 .fillMaxSize()
                         ) {
 
 
                             Column(
-                                Modifier.padding(top = 20.dp),
+                                Modifier.padding(top = 16.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
 
@@ -149,11 +146,12 @@ fun HomeScreen(navController: NavController,
                             backgroundColor = Color.White.copy(alpha = 0.75f), shape =
                             RoundedCornerShape(10), modifier =
                             Modifier
-                                .padding(20.dp)
+                                .padding(bottom = 16.dp)
                                 .fillMaxSize()
                         ) {
                             Column(
-                                Modifier.padding(20.dp), horizontalAlignment =
+                                Modifier.padding(16.dp),
+                                horizontalAlignment =
                                 Alignment
                                     .CenterHorizontally
                             ) {
@@ -166,12 +164,11 @@ fun HomeScreen(navController: NavController,
                                     DBButton(
                                         btnText = "Generate"
                                     ) {
-                                        //TODO make api call
+
                                         scope.launch(Dispatchers.Main) {
                                             load.value = true
                                             withContext(Dispatchers.IO) {
                                                 getRecipesFromIng(getIngredientsString())
-                                               // getRecipes()
                                             }
                                             load.value = false
                                             navController.navigate("recipeList")
@@ -199,14 +196,15 @@ fun HomeScreen(navController: NavController,
                         Card(backgroundColor = Color.White.copy(alpha = 0.75f), shape =
                         RoundedCornerShape(20), modifier =
                         Modifier
-                            .padding(20.dp)
+                            //.padding(20.dp)
                             .fillMaxSize()
                             .clickable {
                                 navController.navigate("inventory")
                             }
                         ) {
                             Column(
-                                Modifier.padding(vertical = 20.dp), horizontalAlignment =
+                                Modifier.padding(20.dp),
+                                horizontalAlignment =
                                 Alignment
                                     .CenterHorizontally
                             ) {
@@ -215,7 +213,6 @@ fun HomeScreen(navController: NavController,
 
                         }
 
-                    }
                 }
 
             }

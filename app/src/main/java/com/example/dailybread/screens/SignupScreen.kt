@@ -139,7 +139,7 @@ fun SignUpScreen(navController: NavController) {
                                     DBButton(
                                         btnText = "Register"
                                     ) {
-                                        //TODO add user to data base
+
                                         println("email entered: " + emailTextState.value.text)
                                         if (passwordTextState.value.text == confirmTextState.value.text)
                                         {
