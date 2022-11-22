@@ -2,7 +2,7 @@ package com.example.dailybread.data
 
 
 data class Ingredient(
-    val name: String,
+    var name: String,
     val count: String
     )
 

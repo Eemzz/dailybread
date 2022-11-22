@@ -3,6 +3,7 @@ package com.example.dailybread.retrofit
 import com.example.dailybread.data.Ingredient
 import com.example.dailybread.data.Recipe
 import com.example.dailybread.user.User
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
@@ -40,10 +41,13 @@ interface ApiInterface {
     @POST ("auth/addingredient")
     fun addIngredient(
         @Field("category") category: String,
-        @Field("category") item: String,
-        @Field("category") quantity: String,
-        @Field("category") email: String,
+        @Field("item") item: String,
+        @Field("quantity") quantity: String,
+        @Field("email") email: String,
     ): Call<DefaultResponse>
+
+    @GET("auth/getinventory")
+    suspend fun inventory(@Query("email") email: String): String
 
     @GET("/recipes")
     suspend fun getRecipes(): List<Recipe>

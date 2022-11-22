@@ -5,6 +5,8 @@ import androidx.compose.runtime.toMutableStateList
 data class Inventory(val ingList: List<Category>)
 data class Category(val title: String, val items: MutableList<Ingredient>)
 
+
+
 private val mockSpiceInventory = listOf(
     Ingredient("Salt", "1 LB"),
     Ingredient("Pepper", "3 Oz")

@@ -13,6 +13,7 @@ import com.example.dailybread.data.InventoryRepository
 //import com.example.dailybread.user.isOnline
 import com.example.dailybread.datastore.InventoryStore
 import com.example.dailybread.ui.theme.DailyBreadTheme
+import com.example.dailybread.user.UserManager
 import com.example.dailybread.user.isOnline
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,7 +26,8 @@ class MainActivity: ComponentActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             //TODO get inventory from api only fetch from disk if no internet or call fails
           //  if(!isOnline(context = this@MainActivity)){
-                InventoryRepository.setInventory(InventoryStore.readInventory(this@MainActivity).ingList)
+                //InventoryRepository.setInventory(InventoryStore.readInventory(this@MainActivity).ingList)
+                //InventoryRepository.setInventory(UserManager.useremail)
           //  }else{
                 //TODO get inventory from api call
            // }
