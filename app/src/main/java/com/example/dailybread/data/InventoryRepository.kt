@@ -8,6 +8,7 @@ import androidx.compose.ui.text.toUpperCase
 import com.example.dailybread.datastore.InventoryStore
 import com.example.dailybread.retrofit.DefaultResponse
 import com.example.dailybread.retrofit.Retro
+import com.example.dailybread.user.User
 import com.example.dailybread.user.UserManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -21,65 +22,122 @@ object InventoryRepository {
     var isUnSaved = false
     var errorMessage = "";
     var added = mutableStateOf(false)
+    var deleted = mutableStateOf(false)
+    var toAdd = mutableListOf(mutableListOf<String>())
+    var toRemove = mutableListOf<String>()
 
     private val inventory = SnapshotStateList<Category>()
     //    .apply { addAll(mockItems) }
     fun getInventory(): MutableList<Category> = inventory
 
-    suspend fun setInventory(categories: List<Category>) {
-    //suspend fun setInventory(email: String) {
+    //suspend fun setInventory(categories: List<Category>) {
+    suspend fun setInventory(email: String) {
         inventory.clear()
-        val list = InventoryStore.inventory(UserManager.useremail)
-        println("inventory items: " + list.toString())
-        val toState = categories.map {
-            val itemsAsState = it.items.toMutableStateList()
-            it.copy(items = itemsAsState)
+        isUnSaved = false
+        //println("is unsaved value in setInventory: " + isUnSaved.toString())
+        //println("to add: " + toAdd)
+        if (toAdd.size !== 1)
+        {
+            for (i in 1 until toAdd.size)
+            {
+                addIngredient(toAdd.get(i).get(0), toAdd.get(i).get(1), toAdd.get(i).get(2), email)
+            }
+        }
+        if (!toRemove.isEmpty())
+        {
+            for (j in 0 until toRemove.size)
+            {
+                deleteIngredient(toRemove.get(j))
+            }
         }
 
-        inventory.addAll(toState)
+        var list = InventoryStore.inventory(email).getJSONArray("inventory")
+        //println("list: " + list.length())
+        //println("list type: " + list)
+        val categoryList = mutableListOf<Category>()
+
+        for (i in 0 until list.length()) {
+            val itemList = mutableListOf<Ingredient>()
+            val items = list.getJSONObject(i).getJSONObject("items")
+            val ingredients = items.getJSONArray("items")
+            if (ingredients.length() !== 0)
+            {
+                for (j in 0 until ingredients.length()) {
+                    //println("items: " + ingredients.getJSONObject(0).get("name"))
+                    itemList.add(
+                        Ingredient(
+                            ingredients.getJSONObject(j).getString("name"),
+                            ingredients.getJSONObject(j).getString("count")
+                        )
+                    )
+                }
+                categoryList.add(Category(list.getJSONObject(i).getString("category"), itemList))
+            }
+
+        }
+
+        //println("categories: " + categoryList)
+
+        inventory.addAll(categoryList)
     }
 
-    fun deleteIngredient(item: Category, ingredient: Ingredient): Boolean {
+    fun tempDeleteIngredient(item: Category, ingredient: Ingredient): Boolean {
         isUnSaved = true
+
+        toRemove.add(ingredient.name)
+
+        println("removing: " + inventory.find { it == item }?.items?.remove(ingredient))
+        println("new inventory: " + inventory.find { it == item }?.items.toString())
         return inventory.find { it == item }?.items?.remove(ingredient) ?: false
+    }
+
+    suspend fun deleteIngredient(ingredient: String) {
+        Retro.instance.deleteIngredient(ingredient, UserManager.useremail)
+
     }
 
     fun getIngredientsString(): String {
         return inventory.flatMap { it.items }.joinToString()
     }
 
-    suspend fun waitAdd() {
-        delay(2000)
-    }
-
-    fun addIngredient(item: Category, ingredient: Ingredient): Boolean = runBlocking {
-        //var added = false
+    suspend fun checkIngredient(category: Category, ingredient: Ingredient): Boolean {
         isUnSaved = true
         ingredient.name = ingredient.name.replaceFirstChar { it.titlecase() }
-        //println("ingredient to add: " + item.title + ", " + ingredient.name + ", " + ingredient.count + ", " + UserManager.useremail)
-        Retro.instance.addIngredient(item.title, ingredient.name, ingredient.count, UserManager.useremail)
-            .enqueue(object: Callback<DefaultResponse> {
-                override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
-                    //TODO("Not yet implemented")
-                    val fromBackend = response.body()!!.message
-                    println("message: " + fromBackend)
-                    if (fromBackend == "added") {
-                        added.value = item.items.add(ingredient)
-                    }
-                    else {
-                        errorMessage = fromBackend
-                    }
-                }
 
-                override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                    //TODO("Not yet implemented")
-                    val message = t.message.toString()
-                    println("error message from backend: " + message)
-                }
+        val response = Retro.instance.checkInventory(ingredient.name)
+        val bool = response.message.toBoolean()
+        println("item exists? " + bool.toString())
 
-            })
-        waitAdd()
-        added.value
+        var addThis = mutableListOf<String>()
+        if (!bool) {
+            addThis.add(category.title)
+            addThis.add(ingredient.name)
+            addThis.add(ingredient.count)
+
+            toAdd.add(addThis)
+
+            added.value = true
+        }
+        else {
+            added.value = false
+        }
+
+        return category.items.add(ingredient)
+    }
+
+    suspend fun addIngredient(category: String, item: String, quantity: String, email: String): Boolean {
+
+        val response = Retro.instance.addIngredient(category, item, quantity, email)
+        val fromBackend = response.message
+        //println("message: " + fromBackend)
+
+        if (fromBackend == "added") {
+            added.value = true
+        } else {
+            added.value = false
+            errorMessage = fromBackend
+        }
+        return added.value
     }
 
     fun editIngredient(item: Category, ingredient: Ingredient, newName: String, newCount: String){

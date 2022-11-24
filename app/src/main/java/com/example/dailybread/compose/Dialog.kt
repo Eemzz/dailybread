@@ -33,6 +33,7 @@ import com.example.dailybread.data.InventoryRepository.removeCategory
 import com.example.dailybread.data.Recipe
 import com.example.dailybread.R
 import com.example.dailybread.data.InventoryRepository
+import com.example.dailybread.data.InventoryRepository.checkIngredient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -337,10 +338,10 @@ fun AddIngredientDialog(openDialog: MutableState<Boolean>, category: Category) {
                             addIngredientNameTextState.value.text,
                             addIngredientCountTextState.value.text
                         )
-                        val added =
+                        //val added =
                         scope.launch(Dispatchers.Main) {
                             withContext(Dispatchers.IO) {
-                                added.value = addIngredient(category, newIng)
+                                added.value = checkIngredient(category, newIng)
                             }
 
                             println("added? " + added.value.toString())

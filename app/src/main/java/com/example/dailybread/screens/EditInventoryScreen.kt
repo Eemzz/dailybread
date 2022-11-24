@@ -21,16 +21,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.dailybread.data.InventoryRepository
 import com.example.dailybread.R
 import com.example.dailybread.compose.*
-import com.example.dailybread.data.Category
-import com.example.dailybread.data.Ingredient
-import com.example.dailybread.data.Inventory
+import com.example.dailybread.data.*
+import com.example.dailybread.data.InventoryRepository.isUnSaved
 import com.example.dailybread.datastore.InventoryStore
+import com.example.dailybread.user.UserManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun EditInventoryScreen(navController: NavController) {
@@ -78,8 +78,15 @@ fun EditInventoryScreen(
             FloatingActionButton(
                 onClick = {
                     //TODO make api call to save Inventory
-                    scope.launch(Dispatchers.IO) {
-                        InventoryStore.writeInventory(context, Inventory(categories))
+                    InventoryRepository.isUnSaved = false
+                    println("is unsaved?" + isUnSaved)
+                    scope.launch(Dispatchers.Main) {
+                        //InventoryStore.writeInventory(context, Inventory(categories))
+                        withContext(Dispatchers.IO) {
+                            InventoryRepository.setInventory(UserManager.useremail)
+                        }
+
+                        navController.navigate("inventory")
                     }
                 },
                 backgroundColor = colorResource(R.color.DByellow),
@@ -207,6 +214,7 @@ fun EditInventoryCard(category: Category) {
             if (openDeleteDialog.value) {
                 DeleteCategoryDialog(openDeleteDialog, category)
             }
+            println("category items: " + category.items)
             category.items.forEach { ingredient ->
                 IngredientRow(ingredient, category, openEditDialog)
                 if (openEditDialog.value) {
@@ -261,7 +269,7 @@ fun IngredientRow(
                 }
                 IconButton(
                     onClick = {
-                        InventoryRepository.deleteIngredient(category, ingredient)
+                        InventoryRepository.tempDeleteIngredient(category, ingredient)
                     }, Modifier.size
                         (25.dp)
                 ) {

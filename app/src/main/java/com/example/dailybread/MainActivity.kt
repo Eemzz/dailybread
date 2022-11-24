@@ -47,10 +47,10 @@ class MainActivity: ComponentActivity() {
 
     private suspend fun useMockInventory() {
         InventoryStore.writeInventory(this@MainActivity, Inventory(mockItems))
-        InventoryRepository.setInventory(InventoryStore.readInventory(this@MainActivity).ingList)
+        //InventoryRepository.setInventory(InventoryStore.readInventory(this@MainActivity).ingList)
     }
     private suspend fun getInventory() {
-        InventoryRepository.setInventory(InventoryStore.readInventory(this@MainActivity).ingList)
+        //InventoryRepository.setInventory(InventoryStore.readInventory(this@MainActivity).ingList)
     }
 
 

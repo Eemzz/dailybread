@@ -31,9 +31,11 @@ import com.example.dailybread.data.InventoryRepository.getIngredientsString
 import com.example.dailybread.R
 import com.example.dailybread.compose.*
 import com.example.dailybread.data.Inventory
+import com.example.dailybread.data.InventoryRepository
 import com.example.dailybread.data.InventoryRepository.isUnSaved
 import com.example.dailybread.data.RecipeManager.getRecipesFromIng
 import com.example.dailybread.datastore.InventoryStore
+import com.example.dailybread.user.UserManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -200,7 +202,19 @@ fun HomeScreen(navController: NavController,
                             //.padding(20.dp)
                             .fillMaxSize()
                             .clickable {
-                                navController.navigate("inventory")
+                                println("account: " + UserManager.useremail)
+                                scope.launch(Dispatchers.Main) {
+
+                                    load.value = true
+                                    withContext(Dispatchers.IO) {
+                                        InventoryRepository.setInventory(UserManager.useremail)
+
+                                    }
+                                    load.value = false
+                                    navController.navigate("inventory")
+                                }
+
+                                //navController.navigate("inventory")
                             }
                         ) {
                             Column(

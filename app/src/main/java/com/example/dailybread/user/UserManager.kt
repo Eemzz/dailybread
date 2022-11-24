@@ -2,7 +2,6 @@ package com.example.dailybread.user
 
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
-import com.example.dailybread.datastore.InventoryStore
 import androidx.compose.runtime.remember
 import com.example.dailybread.retrofit.DefaultResponse
 import android.util.Log
@@ -59,9 +58,10 @@ object UserManager {
 
         if (fromBackend == "logged in") {
             setMessage("")
-            useremail = email
+            useremail = response.email
+            username = response.user
             isUserLoggedIn = true
-            UserStore.writeUser(context, User("", email, password))
+            UserStore.writeUser(context, User(response.user, email, password))
         } else {
             setMessage(fromBackend)
         }
@@ -84,5 +84,15 @@ object UserManager {
         InventoryStore.delete(context)
     }
 
+    suspend fun getUserFromStore(context: Context) {
+        val user = UserStore.readUser(context)
+        if (user != null) {
+            username = user.name
+            useremail = user.email
+            isUserLoggedIn = true
+        } else {
+            isUserLoggedIn = false
+        }
+    }
 
 }
