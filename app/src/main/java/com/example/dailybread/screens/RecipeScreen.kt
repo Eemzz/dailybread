@@ -21,14 +21,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.dailybread.data.InventoryRepository.getInventory
 import com.example.dailybread.compose.MyModalDrawer
 import com.example.dailybread.compose.MyTopAppBar
+import com.example.dailybread.data.InventoryRepository.getInventory
 import com.example.dailybread.data.Recipe
 import com.example.dailybread.data.RecipeRepository
 import com.example.dailybread.data.RecipeRepository.id
 import com.example.dailybread.data.recipes
 import kotlinx.coroutines.launch
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 
 @Composable
@@ -40,6 +42,7 @@ fun RecipeScreen(navController: NavController, recipeName: String = "") {
             drawerState.open()
         }
     }
+
     MyModalDrawer(drawerState, navController) {
         recipes.recipes.forEach{
             if(recipeName == it.name)
@@ -58,6 +61,7 @@ fun RecipeScreen(recipe: Recipe = RecipeRepository.getRecipe(id), openDrawer: ()
     val available = remember { mutableStateOf(false) }
     val ingredients = mutableListOf<String>()
     val inventory = getInventory()
+
     inventory.forEach {
         it.items.forEach {
             ingredients.add(it.name)
@@ -98,7 +102,7 @@ fun RecipeScreen(recipe: Recipe = RecipeRepository.getRecipe(id), openDrawer: ()
                         )
                         recipe.ingredients.forEach {
                             for (name in ingredients) {
-                                if (it.contains(name, ignoreCase = true)) {
+                                if (isContain(it.lowercase(), name.lowercase())) {
                                     available.value = true
                                     break
                                 } else {
@@ -137,4 +141,11 @@ fun RecipeScreen(recipe: Recipe = RecipeRepository.getRecipe(id), openDrawer: ()
         }
     }
 
+}
+@Composable
+fun isContain(source: String, subItem: String): Boolean {
+    val pattern = "\\b$subItem\\b"
+    val p: Pattern = Pattern.compile(pattern)
+    val m: Matcher = p.matcher(source)
+    return m.find()
 }

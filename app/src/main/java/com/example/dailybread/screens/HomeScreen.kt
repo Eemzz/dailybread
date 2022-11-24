@@ -37,6 +37,7 @@ import com.example.dailybread.datastore.InventoryStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.intellij.lang.annotations.JdkConstants
 
 
 @Composable
@@ -85,7 +86,7 @@ fun HomeScreen(navController: NavController,
                         if(isUnSaved){
                             Text(text = "You have unsaved changes to your inventory.", color = Color.Red,
                             modifier = Modifier
-                                .padding(top = 20.dp)
+                                .padding(bottom = 16.dp)
                                 .clickable{navController.navigate("edit")})
                         }
                         Card(

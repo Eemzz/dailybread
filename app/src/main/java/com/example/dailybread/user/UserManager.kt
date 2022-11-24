@@ -1,21 +1,11 @@
 package com.example.dailybread.user
 
-import android.util.MutableBoolean
-import androidx.compose.runtime.MutableState
+import android.content.Context
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import com.example.dailybread.retrofit.DefaultResponse
-import android.util.Log
-import androidx.compose.runtime.rememberCoroutineScope
-import com.example.dailybread.data.*
+import com.example.dailybread.datastore.InventoryStore
 import com.example.dailybread.retrofit.Retro
-import kotlinx.coroutines.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 object UserManager {
-    //TODO remove for session management
     var isUserLoggedIn = false
     var errorMessage = "";
     var registered = mutableStateOf(false)
@@ -31,140 +21,42 @@ object UserManager {
     }
 
     //sends user info via http POST request to backend
-    fun createUser(name: String, email: String, password: String) : Boolean = runBlocking{
+    suspend fun createUser(name: String, email: String, password: String) : Boolean {
 
-        //var registered = mutableStateOf(false)
-        username = name;
-        useremail = email;
-        //implement retrofit post request to server to register user
-        Retro.instance.registerUser(name, email, password)
-            .enqueue(object: Callback<DefaultResponse> {
-                override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
-                    //TODO("Not yet implemented"
-                    val fromBackend = response.body()!!.message
-                    println("message: " + fromBackend)
-                    //GlobalScope.launch(Dispatchers.Main){
-                    //  withContext(Dispatchers.IO) {
-                    if (fromBackend == "registered") {
-                        setMessage("")
-                        isUserLoggedIn = true
-                        registered.value = true
-                    } else {
-                        //println("frombackend != registered")
-                        //errorMessage = response.body()!!.message
-                        setMessage(fromBackend)
-                    }
-                }
+        val response = Retro.instance.registerUser(name, email, password)
+        val fromBackend = response.message
+        println("message: " + fromBackend)
 
-
-                override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                    //TODO("Not yet implemented")
-                    errorMessage = t.message.toString();
-                    println("error message from backend:" + errorMessage);
-                }
-            })
-        //result.await();*/
-        /*GlobalScope.launch{
-            val result = Retro.instance.register(name, email, password)
-            println("result: " + result)
-            /*if (result != null)
-            {
-                registered.value = true
-            }*/
-            println("registered? " + registered.toString())
-
-        }*/
-        /*GlobalScope.launch {
-            val response = makeRegReq(name, email, password)
-            println("return from makeRegReq: " + response)
-        }*/
-
-        /*val res = response.await()
-        println("res: " + res)
-
-        //println("error message: " + errorMessage)
-        if (res != null)
-        {
+        if (fromBackend == "registered") {
+            setMessage("")
+            isUserLoggedIn = true
             registered.value = true
-        }*/
+            username = name;
+            useremail = email;
+        } else {
 
-        waitRegister()
-
+            setMessage(fromBackend)
+        }
         println("registered? " + registered.value.toString())
-        //return registered.value
-        registered.value
+        return registered.value
     }
 
-    suspend fun waitRegister() {
-        delay(4000)
-    }
+    suspend fun loginUser(email: String, password: String, context: Context): Boolean {
 
-    suspend fun waitLogin() {
-        delay(1500)
-    }
+        val response = Retro.instance.loginUser(email, password)
+        val fromBackend = response.message
+        println("message: $fromBackend")
 
-    /*suspend fun makeRegReq(name: String, email: String, password: String) : Response<DefaultResponse> {
-        val result = Retro.instance.register(name, email, password).execute()
-        /*val result = Retro.instance.registerUser(name, email, password)
-            .enqueue(object: Callback<DefaultResponse> {
-                override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
-                    //TODO("Not yet implemented"
-                    val fromBackend = response.body()!!.message
-                    println("message: " + fromBackend)
-                    if (fromBackend == "registered")
-                    {
-                        setMessage("")
-                        registered.value = true
-                    }
-                    else {
-                        //println("frombackend != registered")
-                        //errorMessage = response.body()!!.message
-                        setMessage(fromBackend)
-                    }
-                }
+        if (fromBackend == "logged in") {
+            setMessage("")
+            useremail = email
+            isUserLoggedIn = true
+            UserStore.writeUser(context, User("", email, password))
+        } else {
+            setMessage(fromBackend)
+        }
 
-                override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                    //TODO("Not yet implemented")
-                    errorMessage = t.message.toString();
-                    println("error message from backend:" + errorMessage);
-                }
-            })*/
-        println("result: " + result)
-        return result
-    }*/
-
-    fun loginUser(email: String, password: String): Boolean = runBlocking{
-
-        Retro.instance.loginUser(email, password)
-            .enqueue(object: Callback<DefaultResponse> {
-                override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
-                    //TODO("Not yet implemented")
-                    val fromBackend = response.body()!!.message
-                    println("response: " + response.body())
-                    if (fromBackend == "logged in")
-                    {
-                        setMessage("")
-                        useremail = email
-                        isUserLoggedIn = true
-                    }
-                    else {
-                        //println("frombackend != registered")
-                        //errorMessage = response.body()!!.message
-                        setMessage(fromBackend)
-                    }
-                }
-
-                override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                    //TODO("Not yet implemented")
-                    errorMessage = t.message.toString()
-                    println(t.message)
-                }
-
-            })
-
-        waitLogin()
-
-        isUserLoggedIn
+        return isUserLoggedIn
     }
 
     fun getUserEmail(): String {
@@ -174,6 +66,23 @@ object UserManager {
     fun getUserName(): String {
         return useremail
     }
+    fun logout(context: Context) {
+        username = ""
+        useremail = ""
+        isUserLoggedIn = false
+        UserStore.delete(context)
+        InventoryStore.delete(context)
+    }
 
+    suspend fun getUserFromStore(context: Context) {
+        val user = UserStore.readUser(context)
+        if (user != null) {
+            username = user.name
+            useremail = user.email
+            isUserLoggedIn = true
+        } else {
+            isUserLoggedIn = false
+        }
+    }
 
 }

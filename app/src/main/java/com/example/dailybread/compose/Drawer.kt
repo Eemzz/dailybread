@@ -10,8 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.dailybread.user.UserManager.logout
 import kotlinx.coroutines.launch
 
 
@@ -35,6 +37,7 @@ fun Drawer(
     modifier: Modifier = Modifier,
     onDestinationClicked: (route: String) -> Unit,
 ) {
+    val context = LocalContext.current
     Column(
         modifier
             .fillMaxSize()
@@ -48,6 +51,9 @@ fun Drawer(
                 color = Color.DarkGray,
                 style = MaterialTheme.typography.h4,
                 modifier = Modifier.clickable {
+                    if(screen.title == "Log out"){
+                        logout(context)
+                    }
                     onDestinationClicked(screen.route)
                 }
 

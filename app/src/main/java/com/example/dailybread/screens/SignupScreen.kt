@@ -145,7 +145,7 @@ fun SignUpScreen(navController: NavController) {
                                         {
                                             scope.launch(Dispatchers.Main) {
                                                 load.value=true
-                                                withContext(Dispatchers.IO) {
+                                                withContext(IO) {
                                                     registered.value = UserManager.createUser(nameTextState.value.text, emailTextState.value.text, passwordTextState.value.text)
                                                 }
 
