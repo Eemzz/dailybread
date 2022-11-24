@@ -16,26 +16,18 @@ interface ApiInterface {
 
     @FormUrlEncoded
     @POST ("auth/registeruser")
-    fun registerUser(
+    suspend fun registerUser(
         @Field("name") name:String,
         @Field("email") email:String,
         @Field("password") password:String,
-    ): Call<DefaultResponse>
+    ): DefaultResponse
 
     @FormUrlEncoded
-    @POST("auth/registeruser")
-    suspend fun register(
-        @Field("name") name:String,
-        @Field("email") email:String,
-        @Field("password") password:String,
-    ): Call<DefaultResponse>
-
-    @FormUrlEncoded
-    @POST ("auth/loginuser")
-    fun loginUser(
+    @POST("auth/loginuser")
+    suspend fun loginUser(
         @Field("email") email: String,
         @Field("password") password: String,
-    ): Call<DefaultResponse>
+    ): DefaultResponse
 
     @FormUrlEncoded
     @POST ("auth/addingredient")

@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -50,6 +51,7 @@ fun LoginScreen(navController: NavController) {
     val load = remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val logged =  remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -128,7 +130,10 @@ fun LoginScreen(navController: NavController) {
                                         scope.launch(Dispatchers.Main) {
                                             load.value=true
                                             withContext(Dispatchers.IO) {
-                                                logged.value = UserManager.loginUser(emailTextState.value.text, passwordTextState.value.text)
+                                                logged.value = UserManager.loginUser(
+                                                    emailTextState.value.text,
+                                                    passwordTextState.value.text,
+                                                    context)
                                                 /*if (UserManager.loginUser(emailTextState.value.text, passwordTextState.value.text))
                                                 {
                                                     navController.navigate("home")

@@ -90,7 +90,7 @@ fun InventoryScreen(
                     if(InventoryRepository.isUnSaved){
                         Text(text = "You have unsaved changes to your inventory.", color = Color.Red,
                             modifier = Modifier
-                                .padding(top = 20.dp)
+                                .padding(top = 16.dp)
                                 .clickable{navController.navigate("edit")})
                     }
                 }

@@ -1,9 +1,7 @@
 package com.example.dailybread.user
 
-data class User (
-
-    var name: String,
-    var email: String,
-    var password: String
-
+data class User(
+    val name: String,
+    val email: String,
+    val password: String
 )
