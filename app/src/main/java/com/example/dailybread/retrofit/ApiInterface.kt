@@ -1,10 +1,8 @@
 package com.example.dailybread.retrofit
 
-import com.example.dailybread.data.Ingredient
 import com.example.dailybread.data.Recipe
 import com.example.dailybread.user.User
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.http.*
 
 //Retrofit interface to handle GET and POST requests

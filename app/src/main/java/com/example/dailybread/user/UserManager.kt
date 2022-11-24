@@ -49,9 +49,11 @@ object UserManager {
 
         if (fromBackend == "logged in") {
             setMessage("")
-            useremail = email
+
+            useremail = response.email
+            username = response.user
             isUserLoggedIn = true
-            UserStore.writeUser(context, User("", email, password))
+            UserStore.writeUser(context, User(response.user, email, password))
         } else {
             setMessage(fromBackend)
         }
