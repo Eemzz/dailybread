@@ -396,7 +396,7 @@ fun EditIngredientDialog(
                 )
 
                 DBTextField(
-                    label = ingredient.name.toString(),
+                    label = ingredient.name,
                     keyboardOptions = KeyboardOptions(
                         autoCorrect = false,
                         keyboardType = KeyboardType.Text,
@@ -405,7 +405,7 @@ fun EditIngredientDialog(
                     textState = editIngredientNameTextState
                 )
                 DBTextField(
-                    label = ingredient.count.toString(),
+                    label = ingredient.count,
                     keyboardOptions = KeyboardOptions(
                         autoCorrect = false,
                         keyboardType = KeyboardType.Text,

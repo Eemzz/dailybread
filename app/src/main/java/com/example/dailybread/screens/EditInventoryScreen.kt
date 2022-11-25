@@ -143,7 +143,7 @@ fun EditInventoryScreen(
 
 @Composable
 fun EditInventoryCard(category: Category) {
-    val openEditDialog = remember { mutableStateOf(false) }
+    //val openEditDialog = remember { mutableStateOf(false) }
     val openAddDialog = remember { mutableStateOf(false) }
     val openDeleteDialog = remember { mutableStateOf(false) }
 
@@ -208,11 +208,11 @@ fun EditInventoryCard(category: Category) {
                 DeleteCategoryDialog(openDeleteDialog, category)
             }
             category.items.forEach { ingredient ->
-                IngredientRow(ingredient, category, openEditDialog)
-                if (openEditDialog.value) {
-                    EditIngredientDialog(openEditDialog, category, ingredient)
-
-                }
+                IngredientRow(ingredient, category)
+//                if (openEditDialog.value) {
+//                    EditIngredientDialog(openEditDialog, category, ingredient)
+//
+//                }
 
             }
         }
@@ -237,6 +237,7 @@ fun IngredientRow(
     ) {
 
         if (ingredient.name != "") {
+
             Text(
                 ingredient.name + ", " + ingredient.count, color
                 = Color.DarkGray
@@ -247,7 +248,7 @@ fun IngredientRow(
             ) {
                 IconButton(
                     onClick = {
-                        openEditDialog.value = !openEditDialog.value
+                        openEditDialog.value = true
 
                     }, Modifier
                         .padding(end = 14.dp)
@@ -272,9 +273,13 @@ fun IngredientRow(
                     )
                 }
             }
+
         }
 
+    }
 
+    if (openEditDialog.value) {
+        EditIngredientDialog(openEditDialog, category, ingredient)
     }
 
 }
