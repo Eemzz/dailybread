@@ -4,8 +4,11 @@ package com.example.dailybread.compose
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.Toast
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.AlertDialog
@@ -34,6 +37,9 @@ import com.example.dailybread.data.Recipe
 import com.example.dailybread.R
 import com.example.dailybread.data.InventoryRepository
 import com.example.dailybread.data.InventoryRepository.checkIngredient
+import com.example.dailybread.data.InventoryRepository.editThisIngredient
+import com.example.dailybread.screens.InventoryCard
+import com.example.dailybread.user.UserManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -101,7 +107,10 @@ fun DisplayRecipe(openDialog: MutableState<Boolean>, recipe: Recipe){
 
 @Composable
 fun ChangePasswordDialog(openDialog: MutableState<Boolean>){
-    val NewCategoryTextState = remember { mutableStateOf(TextFieldValue()) }
+    val oldPasswordTextState = remember { mutableStateOf(TextFieldValue()) }
+    val newPasswordTextState = remember { mutableStateOf(TextFieldValue()) }
+    val scope = rememberCoroutineScope()
+    val changed =  remember { mutableStateOf(true) }
     AlertDialog(
         shape = RoundedCornerShape
             (5),
@@ -113,45 +122,77 @@ fun ChangePasswordDialog(openDialog: MutableState<Boolean>){
             Column(
                 Modifier
                     .padding(top = 16.dp)
-                    .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+                    .fillMaxWidth(),
+                    //.height(200.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Change Password", color = Color.DarkGray, fontSize = 20.sp)
-                DBTextField(
+                //item {
+                    Text(text = "Change Password", color = Color.DarkGray, fontSize = 20.sp)
+                    DBTextField(
 
-                    "Current Password",
-                    KeyboardOptions(
-                        autoCorrect = false,
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
-                    NewCategoryTextState
-                )
-                DBTextField(
+                        "Current Password",
+                        KeyboardOptions(
+                            autoCorrect = false,
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        ),
+                        oldPasswordTextState
+                    )
+                    DBTextField(
 
-                    "New Password",
-                    KeyboardOptions(
-                        autoCorrect = false,
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
-                    ),
-                    NewCategoryTextState
-                )
+                        "New Password",
+                        KeyboardOptions(
+                            autoCorrect = false,
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Done
+                        ),
+                        newPasswordTextState
+                    )
 
+                    LazyColumn(
+                        Modifier
+                            .height(30.dp)
+                            .padding(top = 10.dp)
+                            //.fillMaxHeight()
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) { item {
+                        if (!changed.value) {
+                            println("current changed value: " + changed.value)
+                            Text(
+                                text = "Old password is incorrect.",
+                                color = Color.Red,
+                                fontSize = 15.sp,
+                            )
+                        }
+                    }
+
+                    }
+
+                //}
             }
-
         },
 
         buttons = {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp),
+                    .padding(top = 0.dp, bottom = 16.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
                 Button(
                     onClick = {
+                        scope.launch(Dispatchers.Main) {
+                            withContext(Dispatchers.IO) {
+                                changed.value = UserManager.changePassword(UserManager.useremail, oldPasswordTextState.value.text, newPasswordTextState.value.text)
+                                println("password changed? " + changed.value)
+                            }
+                            if (changed.value)
+                            {
+                                openDialog.value = false
+                            }
 
-
+                        }
                     },
                     shape = RoundedCornerShape(50),
                     colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
@@ -401,6 +442,84 @@ fun AddIngredientDialog(openDialog: MutableState<Boolean>, category: Category) {
 }
 
 @Composable
+fun DeleteIngredientDialog(
+    openDialog: MutableState<Boolean>,
+    category: Category,
+    ingredient: Ingredient
+) {
+
+    AlertDialog(
+        shape = RoundedCornerShape
+            (5),
+        onDismissRequest = {
+            openDialog.value = false
+        },
+        title = {
+            Column(
+                Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Are you sure you want to delete \"" + ingredient.name + "\" ?",
+                    color = Color.DarkGray, fontSize = 20.sp
+                )
+            }
+        },
+
+        buttons = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(50.dp)
+                        .padding(5.dp),
+                    onClick = {
+                        //removeCategory(category)
+                        InventoryRepository.tempDeleteIngredient(category, ingredient)
+                        openDialog.value = false
+                    },
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01))
+                ) {
+                    Text(
+                        text = "Yes", modifier = Modifier, color = Color.White,
+                        fontSize
+                        = 15.sp
+                    )
+                }
+                Button(
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(50.dp)
+                        .padding(5.dp),
+                    onClick = {
+                        openDialog.value = false
+                    },
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
+                ) {
+                    Text(
+                        text = "Cancel", modifier = Modifier, color = Color.White,
+                        fontSize
+                        = 15.sp
+                    )
+                }
+            }
+
+        },
+
+        )
+
+
+}
+
+@Composable
 fun EditIngredientDialog(
     openDialog: MutableState<Boolean>,
     category: Category, ingredient: Ingredient
@@ -409,6 +528,8 @@ fun EditIngredientDialog(
     val editIngredientCountTextState = remember { mutableStateOf(TextFieldValue()) }
     var newName: String = ingredient.name.toString()
     var newCount: String = ingredient.count.toString()
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     AlertDialog(
         shape = RoundedCornerShape
@@ -467,12 +588,11 @@ fun EditIngredientDialog(
                         if (editIngredientCountTextState.value.text.isNotBlank()) {
                             newCount = editIngredientCountTextState.value.text
                         }
-                        editIngredient(
+                        editThisIngredient(
                             category, ingredient,
                             newName,
                             newCount
                         )
-
 
                         openDialog.value = false
                     },

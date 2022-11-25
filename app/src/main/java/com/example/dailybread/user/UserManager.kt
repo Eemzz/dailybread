@@ -2,22 +2,14 @@ package com.example.dailybread.user
 
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import com.example.dailybread.retrofit.DefaultResponse
-import android.util.Log
-import androidx.compose.runtime.rememberCoroutineScope
-import com.example.dailybread.data.*
 import com.example.dailybread.datastore.InventoryStore
 import com.example.dailybread.retrofit.Retro
-import kotlinx.coroutines.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 object UserManager {
     var isUserLoggedIn = false
     var errorMessage = "";
     var registered = mutableStateOf(false)
+    var passwordChanged = mutableStateOf(false)
     var username = "";
     var useremail = "";
 
@@ -67,6 +59,19 @@ object UserManager {
         }
 
         return isUserLoggedIn
+    }
+
+    suspend fun changePassword(email: String, password: String, newPassword: String): Boolean {
+        val response = Retro.instance.changePassword(email, password, newPassword)
+        if (response.message == "password changed") {
+            passwordChanged.value = true
+        }
+        else
+        {
+            passwordChanged.value = false
+        }
+
+        return passwordChanged.value
     }
 
     fun getUserEmail(): String {

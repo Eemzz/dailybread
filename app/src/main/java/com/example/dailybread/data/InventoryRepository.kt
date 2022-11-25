@@ -2,20 +2,9 @@ package com.example.dailybread.data
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
-import androidx.compose.ui.text.capitalize
-import androidx.compose.ui.text.toUpperCase
 import com.example.dailybread.datastore.InventoryStore
-import com.example.dailybread.retrofit.DefaultResponse
 import com.example.dailybread.retrofit.Retro
-import com.example.dailybread.user.User
 import com.example.dailybread.user.UserManager
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.util.*
 
 object InventoryRepository {
 
@@ -25,6 +14,7 @@ object InventoryRepository {
     var deleted = mutableStateOf(false)
     var toAdd = mutableListOf(mutableListOf<String>())
     var toRemove = mutableListOf<String>()
+    var toEdit = mutableListOf(mutableListOf<String>())
 
     private val inventory = SnapshotStateList<Category>()
     //    .apply { addAll(mockItems) }
@@ -36,12 +26,33 @@ object InventoryRepository {
         isUnSaved = false
         //println("is unsaved value in setInventory: " + isUnSaved.toString())
         //println("to add: " + toAdd)
-        if (toAdd.size !== 1)
+        if (toEdit.size == 1 && toEdit.get(0).isEmpty())
         {
-            for (i in 1 until toAdd.size)
+            toEdit.removeAll(toEdit)
+        }
+        if (toAdd.size == 1 && toAdd.get(0).isEmpty())
+        {
+            toAdd.removeAll(toAdd)
+        }
+        /*println("to edit: " + toEdit)
+        println("to add: " + toAdd)
+        //println("to edit: " + toEdit)
+        println("to remove: " + toRemove)*/
+        if (!toEdit.isEmpty())
+        {
+            for (i in 0 until toEdit.size)
+            {
+                editIngredient(toEdit.get(i).get(0), toEdit.get(i).get(1), toEdit.get(i).get(2), email)
+            }
+            toEdit.removeAll(toEdit)
+        }
+        if (!toAdd.isEmpty())
+        {
+            for (i in 0 until toAdd.size)
             {
                 addIngredient(toAdd.get(i).get(0), toAdd.get(i).get(1), toAdd.get(i).get(2), email)
             }
+            toAdd.removeAll(toAdd)
         }
         if (!toRemove.isEmpty())
         {
@@ -49,7 +60,12 @@ object InventoryRepository {
             {
                 deleteIngredient(toRemove.get(j))
             }
+            toRemove.removeAll(toRemove)
         }
+        /*println("to edit after: " + toEdit)
+        println("to add after: " + toAdd)
+        //println("to edit: " + toEdit)
+        println("to remove after: " + toRemove)*/
 
         var list = InventoryStore.inventory(email).getJSONArray("inventory")
         //println("list: " + list.length())
@@ -103,7 +119,6 @@ object InventoryRepository {
     suspend fun checkIngredient(category: Category, ingredient: Ingredient): Boolean {
         isUnSaved = true
         ingredient.name = ingredient.name.replaceFirstChar { it.titlecase() }
-
         val response = Retro.instance.checkInventory(ingredient.name)
         val bool = response.message.toBoolean()
         println("item exists? " + bool.toString())
@@ -140,15 +155,33 @@ object InventoryRepository {
         return added.value
     }
 
-    fun editIngredient(item: Category, ingredient: Ingredient, newName: String, newCount: String){
+    suspend fun editIngredient(ingredient: String, newName: String, newCount: String, email: String){
+        //isUnSaved = true
+
+        Retro.instance.editIngredient(ingredient, newName, newCount, email)
+
+    }
+
+    fun editThisIngredient(item: Category, ingredient: Ingredient, newName: String, newCount: String){
         isUnSaved = true
+        val newItem = newName.replaceFirstChar { it.titlecase() }
+        var editThis = mutableListOf<String>()
+        editThis.add(ingredient.name)
+        editThis.add(newItem)
+        editThis.add(newCount)
+
+        toEdit.add(editThis)
+        println("to edit: " + toEdit)
+
         val index = item.items.indexOf(ingredient)
-        val updatedIng = Ingredient(newName, newCount)
+        val updatedIng = Ingredient(newItem, newCount)
         item.items[index] = updatedIng
     }
 
     fun addCategory(item: Category): Boolean {
         isUnSaved = true
+        item.title = item.title.replaceFirstChar { it.titlecase() }
+
         return inventory.add(item)
     }
 

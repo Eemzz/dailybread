@@ -32,6 +32,13 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+data class EditDelete (val ingredient: Ingredient, val edit: Boolean, val delete: Boolean)
+data class InventoryEdit (val edit: MutableList<EditDelete>)
+
+object EditInventory {
+    var editDetails = InventoryEdit(mutableListOf())
+}
+
 @Composable
 fun EditInventoryScreen(navController: NavController) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -151,6 +158,7 @@ fun EditInventoryScreen(
 @Composable
 fun EditInventoryCard(category: Category) {
     val openEditDialog = remember { mutableStateOf(false) }
+    val openDeleteIngDialog = remember{ mutableStateOf(false) }
     val openAddDialog = remember { mutableStateOf(false) }
     val openDeleteDialog = remember { mutableStateOf(false) }
 
@@ -216,13 +224,28 @@ fun EditInventoryCard(category: Category) {
             }
             println("category items: " + category.items)
             category.items.forEach { ingredient ->
-                IngredientRow(ingredient, category, openEditDialog)
+                IngredientRow(ingredient, category, openEditDialog, openDeleteIngDialog)
+                println("item in ingredient row: " + ingredient)
                 if (openEditDialog.value) {
+                    println("edit this ingredient: " + ingredient.name)
                     EditIngredientDialog(openEditDialog, category, ingredient)
 
                 }
-
+                if (openDeleteIngDialog.value) {
+                    println("delete this ingredient: " + ingredient.name)
+                    DeleteIngredientDialog(openDialog = openDeleteIngDialog, category = category, ingredient = ingredient)
+                }
             }
+            /*EditInventory.editDetails.edit.forEach { ingredient ->
+                println("edit details: " + ingredient)
+                if (ingredient.edit)
+                {
+                    EditIngredientDialog(openEditDialog, category, ingredient.ingredient)
+                }
+                if (ingredient.delete) {
+                    DeleteIngredientDialog(openDialog = openDeleteIngDialog, category = category, ingredient = ingredient.ingredient)
+                }
+            }*/
         }
     }
 
@@ -234,8 +257,10 @@ fun IngredientRow(
     ingredient: Ingredient,
     category: Category,
     openEditDialog: MutableState<Boolean> = remember { mutableStateOf(false) },
-
+    openDeleteIngDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
 ) {
+    //val openEdit = remember { mutableListOf<String>() }
+    val openDeleteIng = remember { mutableStateOf(false) }
 
     Row(
         Modifier
@@ -256,7 +281,8 @@ fun IngredientRow(
                 IconButton(
                     onClick = {
                         openEditDialog.value = !openEditDialog.value
-
+                        /*openEditDialog.add(ingredient.name)
+                        openEditDialog.add(true.toString())*/
                     }, Modifier
                         .padding(end = 14.dp)
                         .size(25.dp)
@@ -269,7 +295,9 @@ fun IngredientRow(
                 }
                 IconButton(
                     onClick = {
-                        InventoryRepository.tempDeleteIngredient(category, ingredient)
+                        //InventoryRepository.tempDeleteIngredient(category, ingredient)
+                        openDeleteIngDialog.value = !openDeleteIngDialog.value
+                        //DeleteIngredientDialog(openDialog = openDeleteDialog, category = category, ingredient = ingredient)
                     }, Modifier.size
                         (25.dp)
                 ) {
@@ -282,7 +310,18 @@ fun IngredientRow(
             }
         }
 
+    }
+    //var editOrDel = InventoryEdit(mutableListOf())
+    /*val edit = EditDelete(ingredient, openEdit.value, openDeleteIng.value)
+    EditInventory.editDetails.edit.add(edit)*/
+    /*if (openEditDialog.value) {
+        //println("edit this ingredient: " + ingredient.name)
+        EditIngredientDialog(openEditDialog, category, ingredient)
 
     }
+    if (openDeleteIngDialog.value) {
+        //println("delete this ingredient: " + ingredient.name)
+        DeleteIngredientDialog(openDialog = openDeleteIngDialog, category = category, ingredient = ingredient)
+    }*/
 
 }

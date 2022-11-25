@@ -37,7 +37,6 @@ import com.example.dailybread.compose.DBButton
 import com.example.dailybread.compose.DBLogo
 import com.example.dailybread.compose.DBTextField
 import com.example.dailybread.data.InventoryRepository
-import com.example.dailybread.data.myInventory
 import com.example.dailybread.datastore.InventoryStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
