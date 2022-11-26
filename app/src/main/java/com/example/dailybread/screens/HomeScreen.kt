@@ -171,6 +171,11 @@ fun HomeScreen(navController: NavController,
                                         scope.launch(Dispatchers.Main) {
                                             load.value = true
                                             withContext(Dispatchers.IO) {
+                                                if (InventoryRepository.getInventory().isEmpty())
+                                                {
+                                                    println("inventory was empty")
+                                                    InventoryRepository.setInventory(UserManager.useremail)
+                                                }
                                                 getRecipesFromIng(getIngredientsString())
                                             }
                                             load.value = false
@@ -207,7 +212,11 @@ fun HomeScreen(navController: NavController,
 
                                     load.value = true
                                     withContext(Dispatchers.IO) {
-                                        InventoryRepository.setInventory(UserManager.useremail)
+                                        if (InventoryRepository.getInventory().isEmpty())
+                                        {
+                                            //println("inventory was empty")
+                                            InventoryRepository.setInventory(UserManager.useremail)
+                                        }
 
                                     }
                                     load.value = false

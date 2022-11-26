@@ -146,6 +146,7 @@ object InventoryRepository {
     }
 
     fun getIngredientsString(): String {
+        println("ingredients for recipe: " + inventory.flatMap { it.items }.joinToString())
         return inventory.flatMap { it.items }.joinToString()
     }
 
