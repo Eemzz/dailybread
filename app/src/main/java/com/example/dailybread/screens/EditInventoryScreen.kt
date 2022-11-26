@@ -224,28 +224,13 @@ fun EditInventoryCard(category: Category) {
             }
             println("category items: " + category.items)
             category.items.forEach { ingredient ->
-                IngredientRow(ingredient, category, openEditDialog, openDeleteIngDialog)
-                println("item in ingredient row: " + ingredient)
-                if (openEditDialog.value) {
+                IngredientRow(ingredient, category)//, openEditDialog)//, openDeleteIngDialog)
+                /*if (openEditDialog.value) {
                     println("edit this ingredient: " + ingredient.name)
                     EditIngredientDialog(openEditDialog, category, ingredient)
 
-                }
-                if (openDeleteIngDialog.value) {
-                    println("delete this ingredient: " + ingredient.name)
-                    DeleteIngredientDialog(openDialog = openDeleteIngDialog, category = category, ingredient = ingredient)
-                }
+                }*/
             }
-            /*EditInventory.editDetails.edit.forEach { ingredient ->
-                println("edit details: " + ingredient)
-                if (ingredient.edit)
-                {
-                    EditIngredientDialog(openEditDialog, category, ingredient.ingredient)
-                }
-                if (ingredient.delete) {
-                    DeleteIngredientDialog(openDialog = openDeleteIngDialog, category = category, ingredient = ingredient.ingredient)
-                }
-            }*/
         }
     }
 
@@ -257,10 +242,10 @@ fun IngredientRow(
     ingredient: Ingredient,
     category: Category,
     openEditDialog: MutableState<Boolean> = remember { mutableStateOf(false) },
-    openDeleteIngDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
+   // openDeleteIngDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
 ) {
     //val openEdit = remember { mutableListOf<String>() }
-    val openDeleteIng = remember { mutableStateOf(false) }
+    //val openDeleteIng = remember { mutableStateOf(false) }
 
     Row(
         Modifier
@@ -295,8 +280,8 @@ fun IngredientRow(
                 }
                 IconButton(
                     onClick = {
-                        //InventoryRepository.tempDeleteIngredient(category, ingredient)
-                        openDeleteIngDialog.value = !openDeleteIngDialog.value
+                        InventoryRepository.tempDeleteIngredient(category, ingredient)
+                        //openDeleteIngDialog.value = !openDeleteIngDialog.value
                         //DeleteIngredientDialog(openDialog = openDeleteDialog, category = category, ingredient = ingredient)
                     }, Modifier.size
                         (25.dp)
@@ -311,17 +296,8 @@ fun IngredientRow(
         }
 
     }
-    //var editOrDel = InventoryEdit(mutableListOf())
-    /*val edit = EditDelete(ingredient, openEdit.value, openDeleteIng.value)
-    EditInventory.editDetails.edit.add(edit)*/
-    /*if (openEditDialog.value) {
-        //println("edit this ingredient: " + ingredient.name)
+    if (openEditDialog.value) {
         EditIngredientDialog(openEditDialog, category, ingredient)
-
     }
-    if (openDeleteIngDialog.value) {
-        //println("delete this ingredient: " + ingredient.name)
-        DeleteIngredientDialog(openDialog = openDeleteIngDialog, category = category, ingredient = ingredient)
-    }*/
 
 }

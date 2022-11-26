@@ -2,18 +2,22 @@ package com.example.dailybread.data
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import com.example.dailybread.datastore.InventoryStore
 import com.example.dailybread.retrofit.Retro
 import com.example.dailybread.user.UserManager
 
 object InventoryRepository {
 
+    var emptyCategory = mutableListOf<Category>()
     var isUnSaved = false
     var errorMessage = "";
     var added = mutableStateOf(false)
     var deleted = mutableStateOf(false)
     var toAdd = mutableListOf(mutableListOf<String>())
+    var catToAdd = mutableListOf<Category>()
     var toRemove = mutableListOf<String>()
+    var catToRemove = mutableListOf<String>()
     var toEdit = mutableListOf(mutableListOf<String>())
 
     private val inventory = SnapshotStateList<Category>()
@@ -22,10 +26,11 @@ object InventoryRepository {
 
     //suspend fun setInventory(categories: List<Category>) {
     suspend fun setInventory(email: String) {
+        val emptyCats = getEmptyCategories()
         inventory.clear()
+        //inventory.addAll(emptyCats)
         isUnSaved = false
-        //println("is unsaved value in setInventory: " + isUnSaved.toString())
-        //println("to add: " + toAdd)
+
         if (toEdit.size == 1 && toEdit.get(0).isEmpty())
         {
             toEdit.removeAll(toEdit)
@@ -34,10 +39,7 @@ object InventoryRepository {
         {
             toAdd.removeAll(toAdd)
         }
-        /*println("to edit: " + toEdit)
-        println("to add: " + toAdd)
-        //println("to edit: " + toEdit)
-        println("to remove: " + toRemove)*/
+
         if (!toEdit.isEmpty())
         {
             for (i in 0 until toEdit.size)
@@ -46,6 +48,7 @@ object InventoryRepository {
             }
             toEdit.removeAll(toEdit)
         }
+
         if (!toAdd.isEmpty())
         {
             for (i in 0 until toAdd.size)
@@ -62,10 +65,22 @@ object InventoryRepository {
             }
             toRemove.removeAll(toRemove)
         }
-        /*println("to edit after: " + toEdit)
-        println("to add after: " + toAdd)
-        //println("to edit: " + toEdit)
-        println("to remove after: " + toRemove)*/
+        if (!catToRemove.isEmpty())
+        {
+            for (k in 0 until catToRemove.size)
+            {
+                removeCategory(catToRemove.get(k))
+            }
+            catToRemove.removeAll(catToRemove)
+        }
+        if (!catToAdd.isEmpty())
+        {
+            for (l in 0 until catToAdd.size)
+            {
+                addCategory(catToAdd.get(l))
+            }
+            catToAdd.removeAll(catToAdd)
+        }
 
         var list = InventoryStore.inventory(email).getJSONArray("inventory")
         //println("list: " + list.length())
@@ -76,25 +91,43 @@ object InventoryRepository {
             val itemList = mutableListOf<Ingredient>()
             val items = list.getJSONObject(i).getJSONObject("items")
             val ingredients = items.getJSONArray("items")
+
             if (ingredients.length() !== 0)
             {
                 for (j in 0 until ingredients.length()) {
                     //println("items: " + ingredients.getJSONObject(0).get("name"))
-                    itemList.add(
-                        Ingredient(
-                            ingredients.getJSONObject(j).getString("name"),
-                            ingredients.getJSONObject(j).getString("count")
+                    if (!ingredients.getJSONObject(j).getString("name").isEmpty())
+                    {
+                        println("items: " + ingredients)
+                        itemList.add(
+                            Ingredient(
+                                ingredients.getJSONObject(j).getString("name"),
+                                ingredients.getJSONObject(j).getString("count")
+                            )
                         )
-                    )
+                    }
+
                 }
                 categoryList.add(Category(list.getJSONObject(i).getString("category"), itemList))
             }
 
         }
 
-        //println("categories: " + categoryList)
+        /*for (j in 0 until emptyCategory.size)
+        {
+            if (categoryList.contains(emptyCategory.get(j)))
+            {
+                emptyCategory.remove(emptyCategory.get(j))
+            }
+        }*/
 
-        inventory.addAll(categoryList)
+        val toState = categoryList.map {
+            val itemsAsState = it.items.toMutableStateList()
+            it.copy(items = itemsAsState)
+        }
+
+        inventory.addAll(toState)
+        //inventory.addAll(emptyCategory)
     }
 
     fun tempDeleteIngredient(item: Category, ingredient: Ingredient): Boolean {
@@ -119,7 +152,7 @@ object InventoryRepository {
     suspend fun checkIngredient(category: Category, ingredient: Ingredient): Boolean {
         isUnSaved = true
         ingredient.name = ingredient.name.replaceFirstChar { it.titlecase() }
-        val response = Retro.instance.checkInventory(ingredient.name)
+        val response = Retro.instance.checkInventory(ingredient.name, UserManager.useremail)
         val bool = response.message.toBoolean()
         println("item exists? " + bool.toString())
 
@@ -178,15 +211,58 @@ object InventoryRepository {
         item.items[index] = updatedIng
     }
 
-    fun addCategory(item: Category): Boolean {
+    suspend fun categoryToAdd(category: Category): Boolean {
         isUnSaved = true
-        item.title = item.title.replaceFirstChar { it.titlecase() }
 
-        return inventory.add(item)
+        category.title = category.title.replaceFirstChar { it.titlecase() }
+        val response = Retro.instance.checkCategory(category.title, UserManager.useremail)
+        println("adding category to backend: " + response.message)
+        val bool = response.message.toBoolean()
+        println("category exists? " + bool.toString())
+
+        if (!bool) {
+
+            inventory.add(category)
+            catToAdd.add(category)
+
+            added.value = true
+        }
+        else {
+            added.value = false
+        }
+
+        //return inventory.add(category)
+        return added.value
     }
 
-    fun removeCategory(item: Category): Boolean {
+    suspend fun addCategory(item: Category) {
+        Retro.instance.addCategory(item.title, UserManager.useremail)
+
+    }
+
+    fun categoryToRemove(item: Category): Boolean {
         isUnSaved = true
+
+        catToRemove.add(item.title)
+
         return inventory.remove(item)
+    }
+
+    suspend fun removeCategory(category: String){
+        //isUnSaved = true
+        Retro.instance.deleteCategory(category, UserManager.useremail)
+
+    }
+
+    fun getEmptyCategories(): List<Category>{
+        for (i in 0 until inventory.size)
+        {
+            if (inventory.get(i).items.isEmpty())
+            {
+                emptyCategory.add(inventory.get(i))
+            }
+        }
+
+        return emptyCategory
     }
 }

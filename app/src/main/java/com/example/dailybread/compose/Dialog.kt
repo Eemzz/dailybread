@@ -36,6 +36,8 @@ import com.example.dailybread.data.InventoryRepository.removeCategory
 import com.example.dailybread.data.Recipe
 import com.example.dailybread.R
 import com.example.dailybread.data.InventoryRepository
+import com.example.dailybread.data.InventoryRepository.categoryToAdd
+import com.example.dailybread.data.InventoryRepository.categoryToRemove
 import com.example.dailybread.data.InventoryRepository.checkIngredient
 import com.example.dailybread.data.InventoryRepository.editThisIngredient
 import com.example.dailybread.screens.InventoryCard
@@ -230,7 +232,7 @@ fun DeleteCategoryDialog(
     openDialog: MutableState<Boolean>,
     category: Category
 ) {
-
+    val scope = rememberCoroutineScope()
     AlertDialog(
         shape = RoundedCornerShape
             (5),
@@ -278,7 +280,7 @@ fun DeleteCategoryDialog(
                         .height(50.dp)
                         .padding(5.dp),
                     onClick = {
-                        removeCategory(category)
+                        categoryToRemove(category)
                         openDialog.value = false
                     },
                     shape = RoundedCornerShape(50),
@@ -636,6 +638,10 @@ fun EditIngredientDialog(
 @Composable
 fun AddCategoryDialog(openDialog: MutableState<Boolean>, categories: MutableList<Category>){
     val NewCategoryTextState = remember { mutableStateOf(TextFieldValue()) }
+    val scope = rememberCoroutineScope()
+    val added = remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
     AlertDialog(
         shape = RoundedCornerShape
             (5),
@@ -678,14 +684,26 @@ fun AddCategoryDialog(openDialog: MutableState<Boolean>, categories: MutableList
             ) {
                 Button(
                     onClick = {
-                        openDialog.value = false
                         val newCategory =
                             Category(NewCategoryTextState.value.text, mutableListOf())
 
                         //it was adding twice
                        // categories.add(newCategory)
+                        scope.launch(Dispatchers.Main) {
+                            withContext(Dispatchers.IO) {
+                                added.value = categoryToAdd(newCategory)
+                            }
 
-                        addCategory(newCategory)
+                            println("category added? " + added.value.toString())
+                            openDialog.value = false
+
+                            if (!added.value)
+                            {
+                                val message = "Category already exists inventory! Edit category instead."
+                                Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                            }
+                        }
+
                     },
                     shape = RoundedCornerShape(50),
                     colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
@@ -722,7 +740,7 @@ fun AddCategoryDialog(openDialog: MutableState<Boolean>, categories: MutableList
     )
 }
 
-@Composable
+/*@Composable
 fun AddCategoryContent(openDialog: MutableState<Boolean>) {
     val NewCategoryTextState = remember { mutableStateOf(TextFieldValue()) }
     Column(Modifier.padding(16.dp), horizontalAlignment = CenterHorizontally) {
@@ -779,7 +797,7 @@ fun AddCategoryContent(openDialog: MutableState<Boolean>) {
             }
         }
     }
-}
+}*/
 
 @Composable
 fun ErrorMessageDialog(openDialog: MutableState<Boolean>, message: String) {

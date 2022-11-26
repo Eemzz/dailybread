@@ -29,6 +29,20 @@ interface ApiInterface {
         @Field("newPass") newPass: String
     ): DefaultResponse
 
+    @FormUrlEncoded
+    @POST ("auth/addcategory")
+    suspend fun addCategory(
+        @Field("category") category: String,
+        @Field("email") email: String
+    ): DefaultResponse
+
+    @FormUrlEncoded
+    @POST ("auth/deletecategory")
+    suspend fun deleteCategory(
+        @Field("category") category: String,
+        @Field("email") email: String
+    ): DefaultResponse
+
     //addIngredient saves to db
     @FormUrlEncoded
     @POST ("auth/addingredient")
@@ -57,7 +71,10 @@ interface ApiInterface {
 
     //checkInventory is called in edit inventory page, before user saves to db
     @GET("auth/getingredient")
-    suspend fun checkInventory(@Query("item") item: String): DefaultResponse
+    suspend fun checkInventory(@Query("item") item: String, @Query("email") email: String): DefaultResponse
+
+    @GET("auth/getcategory")
+    suspend fun checkCategory(@Query("category") category: String, @Query("email") email: String): DefaultResponse
 
     @GET("auth/getinventory")
     suspend fun inventory(@Query("email") email: String): String
