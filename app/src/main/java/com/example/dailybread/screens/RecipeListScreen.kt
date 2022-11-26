@@ -87,7 +87,7 @@ fun RecipeListScreen(
                             ) {
                                 Column(
                                     modifier = Modifier.padding(16.dp),
-                                    horizontalAlignment = CenterHorizontally
+                                    //horizontalAlignment = CenterHorizontally
                                 ) {
                                     Text(it.name, color = Color.DarkGray, fontSize = 20.sp)
 
