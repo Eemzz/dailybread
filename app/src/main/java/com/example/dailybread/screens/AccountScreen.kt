@@ -119,7 +119,8 @@ fun AccountScreen(openDrawer: () -> Unit){
                 }
             }
             if (openDialog.value) {
-                val NewCategoryTextState = remember { mutableStateOf(TextFieldValue()) }
+                ChangePasswordDialog(openDialog = openDialog)
+                /*val NewCategoryTextState = remember { mutableStateOf(TextFieldValue()) }
                 Card(
                     Modifier
                         .align(Alignment.Center)
@@ -170,7 +171,7 @@ fun AccountScreen(openDrawer: () -> Unit){
                     }
 
 
-                }
+                }*/
 
 
             }

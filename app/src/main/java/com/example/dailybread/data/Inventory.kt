@@ -1,9 +1,15 @@
 package com.example.dailybread.data
 
 import androidx.compose.runtime.toMutableStateList
+import com.example.dailybread.datastore.InventoryStore
+import com.example.dailybread.user.UserManager
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import org.json.JSONArray
 
 data class Inventory(val ingList: List<Category>)
-data class Category(val title: String, val items: MutableList<Ingredient>)
+data class Category(var title: String, val items: MutableList<Ingredient>)
+
 
 private val mockSpiceInventory = listOf(
     Ingredient("Salt", "1 LB"),

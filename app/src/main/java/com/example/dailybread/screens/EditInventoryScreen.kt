@@ -21,16 +21,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.dailybread.data.InventoryRepository
 import com.example.dailybread.R
 import com.example.dailybread.compose.*
-import com.example.dailybread.data.Category
-import com.example.dailybread.data.Ingredient
-import com.example.dailybread.data.Inventory
+import com.example.dailybread.data.*
+import com.example.dailybread.data.InventoryRepository.isUnSaved
 import com.example.dailybread.datastore.InventoryStore
+import com.example.dailybread.user.UserManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+data class EditDelete (val ingredient: Ingredient, val edit: Boolean, val delete: Boolean)
+data class InventoryEdit (val edit: MutableList<EditDelete>)
+
+object EditInventory {
+    var editDetails = InventoryEdit(mutableListOf())
+}
 
 @Composable
 fun EditInventoryScreen(navController: NavController) {
@@ -78,8 +85,15 @@ fun EditInventoryScreen(
             FloatingActionButton(
                 onClick = {
                     //TODO make api call to save Inventory
-                    scope.launch(Dispatchers.IO) {
-                        InventoryStore.writeInventory(context, Inventory(categories))
+                    InventoryRepository.isUnSaved = false
+                    println("is unsaved?" + isUnSaved)
+                    scope.launch(Dispatchers.Main) {
+                        //InventoryStore.writeInventory(context, Inventory(categories))
+                        withContext(Dispatchers.IO) {
+                            InventoryRepository.setInventory(UserManager.useremail)
+                        }
+
+                        navController.navigate("inventory")
                     }
                 },
                 backgroundColor = colorResource(R.color.DByellow),
@@ -143,7 +157,8 @@ fun EditInventoryScreen(
 
 @Composable
 fun EditInventoryCard(category: Category) {
-    //val openEditDialog = remember { mutableStateOf(false) }
+    val openEditDialog = remember { mutableStateOf(false) }
+    val openDeleteIngDialog = remember{ mutableStateOf(false) }
     val openAddDialog = remember { mutableStateOf(false) }
     val openDeleteDialog = remember { mutableStateOf(false) }
 
@@ -207,13 +222,14 @@ fun EditInventoryCard(category: Category) {
             if (openDeleteDialog.value) {
                 DeleteCategoryDialog(openDeleteDialog, category)
             }
+            println("category items: " + category.items)
             category.items.forEach { ingredient ->
-                IngredientRow(ingredient, category)
-//                if (openEditDialog.value) {
-//                    EditIngredientDialog(openEditDialog, category, ingredient)
-//
-//                }
+                IngredientRow(ingredient, category)//, openEditDialog)//, openDeleteIngDialog)
+                /*if (openEditDialog.value) {
+                    println("edit this ingredient: " + ingredient.name)
+                    EditIngredientDialog(openEditDialog, category, ingredient)
 
+                }*/
             }
         }
     }
@@ -226,8 +242,10 @@ fun IngredientRow(
     ingredient: Ingredient,
     category: Category,
     openEditDialog: MutableState<Boolean> = remember { mutableStateOf(false) },
-
+   // openDeleteIngDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
 ) {
+    //val openEdit = remember { mutableListOf<String>() }
+    //val openDeleteIng = remember { mutableStateOf(false) }
 
     Row(
         Modifier
@@ -237,7 +255,6 @@ fun IngredientRow(
     ) {
 
         if (ingredient.name != "") {
-
             Text(
                 ingredient.name + ", " + ingredient.count, color
                 = Color.DarkGray
@@ -248,8 +265,9 @@ fun IngredientRow(
             ) {
                 IconButton(
                     onClick = {
-                        openEditDialog.value = true
-
+                        openEditDialog.value = !openEditDialog.value
+                        /*openEditDialog.add(ingredient.name)
+                        openEditDialog.add(true.toString())*/
                     }, Modifier
                         .padding(end = 14.dp)
                         .size(25.dp)
@@ -262,7 +280,9 @@ fun IngredientRow(
                 }
                 IconButton(
                     onClick = {
-                        InventoryRepository.deleteIngredient(category, ingredient)
+                        InventoryRepository.tempDeleteIngredient(category, ingredient)
+                        //openDeleteIngDialog.value = !openDeleteIngDialog.value
+                        //DeleteIngredientDialog(openDialog = openDeleteDialog, category = category, ingredient = ingredient)
                     }, Modifier.size
                         (25.dp)
                 ) {
@@ -273,11 +293,9 @@ fun IngredientRow(
                     )
                 }
             }
-
         }
 
     }
-
     if (openEditDialog.value) {
         EditIngredientDialog(openEditDialog, category, ingredient)
     }

@@ -36,6 +36,8 @@ import com.example.dailybread.user.UserManager
 import com.example.dailybread.compose.DBButton
 import com.example.dailybread.compose.DBLogo
 import com.example.dailybread.compose.DBTextField
+import com.example.dailybread.data.InventoryRepository
+import com.example.dailybread.datastore.InventoryStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -125,7 +127,7 @@ fun LoginScreen(navController: NavController) {
                                         btnText = "Log in"
                                     ) {
 
-                                        println("email entered: " + emailTextState.value.text)
+                                        //println("email entered: " + emailTextState.value.text)
                                         scope.launch(Dispatchers.Main) {
                                             load.value=true
                                             withContext(Dispatchers.IO) {
@@ -137,6 +139,7 @@ fun LoginScreen(navController: NavController) {
                                                 {
                                                     navController.navigate("home")
                                                 }*/
+                                                InventoryRepository.setInventory(UserManager.useremail)
                                             }
                                             load.value=false
                                             if (logged.value)

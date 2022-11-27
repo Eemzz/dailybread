@@ -87,6 +87,7 @@ fun InventoryScreen(
 
             ) {
                 item {
+                    //println("inventory screen isUnsaved value: " + InventoryRepository.isUnSaved.toString())
                     if(InventoryRepository.isUnSaved){
                         Text(text = "You have unsaved changes to your inventory.", color = Color.Red,
                             modifier = Modifier

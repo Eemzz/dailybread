@@ -9,6 +9,7 @@ object UserManager {
     var isUserLoggedIn = false
     var errorMessage = "";
     var registered = mutableStateOf(false)
+    var passwordChanged = mutableStateOf(false)
     var username = "";
     var useremail = "";
 
@@ -49,7 +50,6 @@ object UserManager {
 
         if (fromBackend == "logged in") {
             setMessage("")
-
             useremail = response.email
             username = response.user
             isUserLoggedIn = true
@@ -59,6 +59,19 @@ object UserManager {
         }
 
         return isUserLoggedIn
+    }
+
+    suspend fun changePassword(email: String, password: String, newPassword: String): Boolean {
+        val response = Retro.instance.changePassword(email, password, newPassword)
+        if (response.message == "password changed") {
+            passwordChanged.value = true
+        }
+        else
+        {
+            passwordChanged.value = false
+        }
+
+        return passwordChanged.value
     }
 
     fun getUserEmail(): String {

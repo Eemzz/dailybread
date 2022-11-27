@@ -1,35 +1,50 @@
 package com.example.dailybread.compose
 
 
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.widget.Toast
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.dailybread.data.Category
+import com.example.dailybread.data.Ingredient
 import com.example.dailybread.data.InventoryRepository.addCategory
 import com.example.dailybread.data.InventoryRepository.addIngredient
 import com.example.dailybread.data.InventoryRepository.editIngredient
 import com.example.dailybread.data.InventoryRepository.removeCategory
-import com.example.dailybread.data.Category
-import com.example.dailybread.data.Ingredient
 import com.example.dailybread.data.Recipe
+import com.example.dailybread.R
+import com.example.dailybread.data.InventoryRepository
+import com.example.dailybread.data.InventoryRepository.categoryToAdd
+import com.example.dailybread.data.InventoryRepository.categoryToRemove
+import com.example.dailybread.data.InventoryRepository.checkIngredient
+import com.example.dailybread.data.InventoryRepository.editThisIngredient
+import com.example.dailybread.screens.InventoryCard
+import com.example.dailybread.user.UserManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -94,7 +109,10 @@ fun DisplayRecipe(openDialog: MutableState<Boolean>, recipe: Recipe){
 
 @Composable
 fun ChangePasswordDialog(openDialog: MutableState<Boolean>){
-    val NewCategoryTextState = remember { mutableStateOf(TextFieldValue()) }
+    val oldPasswordTextState = remember { mutableStateOf(TextFieldValue()) }
+    val newPasswordTextState = remember { mutableStateOf(TextFieldValue()) }
+    val scope = rememberCoroutineScope()
+    val changed =  remember { mutableStateOf(true) }
     AlertDialog(
         shape = RoundedCornerShape
             (5),
@@ -106,45 +124,77 @@ fun ChangePasswordDialog(openDialog: MutableState<Boolean>){
             Column(
                 Modifier
                     .padding(top = 16.dp)
-                    .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+                    .fillMaxWidth(),
+                    //.height(200.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Change Password", color = Color.DarkGray, fontSize = 20.sp)
-                DBTextField(
+                //item {
+                    Text(text = "Change Password", color = Color.DarkGray, fontSize = 20.sp)
+                    DBTextField(
 
-                    "Current Password",
-                    KeyboardOptions(
-                        autoCorrect = false,
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
-                    NewCategoryTextState
-                )
-                DBTextField(
+                        "Current Password",
+                        KeyboardOptions(
+                            autoCorrect = false,
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        ),
+                        oldPasswordTextState
+                    )
+                    DBTextField(
 
-                    "New Password",
-                    KeyboardOptions(
-                        autoCorrect = false,
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
-                    ),
-                    NewCategoryTextState
-                )
+                        "New Password",
+                        KeyboardOptions(
+                            autoCorrect = false,
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Done
+                        ),
+                        newPasswordTextState
+                    )
 
+                    LazyColumn(
+                        Modifier
+                            .height(30.dp)
+                            .padding(top = 10.dp)
+                            //.fillMaxHeight()
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) { item {
+                        if (!changed.value) {
+                            println("current changed value: " + changed.value)
+                            Text(
+                                text = "Old password is incorrect.",
+                                color = Color.Red,
+                                fontSize = 15.sp,
+                            )
+                        }
+                    }
+
+                    }
+
+                //}
             }
-
         },
 
         buttons = {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp),
+                    .padding(top = 0.dp, bottom = 16.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
                 Button(
                     onClick = {
+                        scope.launch(Dispatchers.Main) {
+                            withContext(Dispatchers.IO) {
+                                changed.value = UserManager.changePassword(UserManager.useremail, oldPasswordTextState.value.text, newPasswordTextState.value.text)
+                                println("password changed? " + changed.value)
+                            }
+                            if (changed.value)
+                            {
+                                openDialog.value = false
+                            }
 
-
+                        }
                     },
                     shape = RoundedCornerShape(50),
                     colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
@@ -182,7 +232,7 @@ fun DeleteCategoryDialog(
     openDialog: MutableState<Boolean>,
     category: Category
 ) {
-
+    val scope = rememberCoroutineScope()
     AlertDialog(
         shape = RoundedCornerShape
             (5),
@@ -230,7 +280,7 @@ fun DeleteCategoryDialog(
                         .height(50.dp)
                         .padding(5.dp),
                     onClick = {
-                        removeCategory(category)
+                        categoryToRemove(category)
                         openDialog.value = false
                     },
                     shape = RoundedCornerShape(50),
@@ -272,6 +322,10 @@ fun DeleteCategoryDialog(
 fun AddIngredientDialog(openDialog: MutableState<Boolean>, category: Category) {
     val addIngredientNameTextState = remember { mutableStateOf(TextFieldValue()) }
     val addIngredientCountTextState = remember { mutableStateOf(TextFieldValue()) }
+
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val added = remember { mutableStateOf(false) }
 
     AlertDialog(
         shape = RoundedCornerShape
@@ -327,8 +381,29 @@ fun AddIngredientDialog(openDialog: MutableState<Boolean>, category: Category) {
                             addIngredientNameTextState.value.text,
                             addIngredientCountTextState.value.text
                         )
-                        addIngredient(category, newIng)
-                        openDialog.value = false
+                        //val added =
+                        scope.launch(Dispatchers.Main) {
+                            withContext(Dispatchers.IO) {
+                                added.value = checkIngredient(category, newIng)
+                            }
+
+                            println("added? " + added.value.toString())
+                            /*if (addIngredient(category, newIng))
+                            {
+                                openDialog.value = false
+                            }
+                            else {
+                                Toast.makeText(context, InventoryRepository.errorMessage, Toast.LENGTH_LONG)
+                            }*/
+                            openDialog.value = false
+                            if (!added.value)
+                            {
+                                val message = "Item is already in inventory! Edit item instead."
+                                Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                            }
+                        }
+
+
                     },
                     shape = RoundedCornerShape(50),
                     colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
@@ -363,7 +438,86 @@ fun AddIngredientDialog(openDialog: MutableState<Boolean>, category: Category) {
             }
 
         },
+
     )
+
+}
+
+@Composable
+fun DeleteIngredientDialog(
+    openDialog: MutableState<Boolean>,
+    category: Category,
+    ingredient: Ingredient
+) {
+
+    AlertDialog(
+        shape = RoundedCornerShape
+            (5),
+        onDismissRequest = {
+            openDialog.value = false
+        },
+        title = {
+            Column(
+                Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Are you sure you want to delete \"" + ingredient.name + "\" ?",
+                    color = Color.DarkGray, fontSize = 20.sp
+                )
+            }
+        },
+
+        buttons = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(50.dp)
+                        .padding(5.dp),
+                    onClick = {
+                        //removeCategory(category)
+                        InventoryRepository.tempDeleteIngredient(category, ingredient)
+                        openDialog.value = false
+                    },
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01))
+                ) {
+                    Text(
+                        text = "Yes", modifier = Modifier, color = Color.White,
+                        fontSize
+                        = 15.sp
+                    )
+                }
+                Button(
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(50.dp)
+                        .padding(5.dp),
+                    onClick = {
+                        openDialog.value = false
+                    },
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
+                ) {
+                    Text(
+                        text = "Cancel", modifier = Modifier, color = Color.White,
+                        fontSize
+                        = 15.sp
+                    )
+                }
+            }
+
+        },
+
+        )
+
 
 }
 
@@ -376,6 +530,8 @@ fun EditIngredientDialog(
     val editIngredientCountTextState = remember { mutableStateOf(TextFieldValue()) }
     var newName: String = ingredient.name.toString()
     var newCount: String = ingredient.count.toString()
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     AlertDialog(
         shape = RoundedCornerShape
@@ -434,12 +590,11 @@ fun EditIngredientDialog(
                         if (editIngredientCountTextState.value.text.isNotBlank()) {
                             newCount = editIngredientCountTextState.value.text
                         }
-                        editIngredient(
+                        editThisIngredient(
                             category, ingredient,
                             newName,
                             newCount
                         )
-
 
                         openDialog.value = false
                     },
@@ -483,6 +638,10 @@ fun EditIngredientDialog(
 @Composable
 fun AddCategoryDialog(openDialog: MutableState<Boolean>, categories: MutableList<Category>){
     val NewCategoryTextState = remember { mutableStateOf(TextFieldValue()) }
+    val scope = rememberCoroutineScope()
+    val added = remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
     AlertDialog(
         shape = RoundedCornerShape
             (5),
@@ -525,14 +684,26 @@ fun AddCategoryDialog(openDialog: MutableState<Boolean>, categories: MutableList
             ) {
                 Button(
                     onClick = {
-                        openDialog.value = false
                         val newCategory =
                             Category(NewCategoryTextState.value.text, mutableListOf())
 
                         //it was adding twice
                        // categories.add(newCategory)
+                        scope.launch(Dispatchers.Main) {
+                            withContext(Dispatchers.IO) {
+                                added.value = categoryToAdd(newCategory)
+                            }
 
-                        addCategory(newCategory)
+                            println("category added? " + added.value.toString())
+                            openDialog.value = false
+
+                            if (!added.value)
+                            {
+                                val message = "Category already exists inventory! Edit category instead."
+                                Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                            }
+                        }
+
                     },
                     shape = RoundedCornerShape(50),
                     colors = ButtonDefaults.textButtonColors(Color(0xFFFDAF01)),
@@ -569,7 +740,7 @@ fun AddCategoryDialog(openDialog: MutableState<Boolean>, categories: MutableList
     )
 }
 
-@Composable
+/*@Composable
 fun AddCategoryContent(openDialog: MutableState<Boolean>) {
     val NewCategoryTextState = remember { mutableStateOf(TextFieldValue()) }
     Column(Modifier.padding(16.dp), horizontalAlignment = CenterHorizontally) {
@@ -626,7 +797,7 @@ fun AddCategoryContent(openDialog: MutableState<Boolean>) {
             }
         }
     }
-}
+}*/
 
 @Composable
 fun ErrorMessageDialog(openDialog: MutableState<Boolean>, message: String) {
@@ -644,7 +815,7 @@ fun ErrorMessageDialog(openDialog: MutableState<Boolean>, message: String) {
                     .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Cannot register user", color
+                    text = message, color
                     = Color.DarkGray, fontSize = 20.sp
                 )
             }

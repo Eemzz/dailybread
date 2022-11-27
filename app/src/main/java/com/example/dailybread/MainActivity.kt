@@ -15,6 +15,7 @@ import com.example.dailybread.data.mockItems
 //import com.example.dailybread.user.isOnline
 import com.example.dailybread.datastore.InventoryStore
 import com.example.dailybread.ui.theme.DailyBreadTheme
+import com.example.dailybread.user.UserManager
 import com.example.dailybread.user.isOnline
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -30,6 +31,8 @@ class MainActivity: ComponentActivity() {
           //  if(!isOnline(context = this@MainActivity)){
                 useMockInventory()
 //                getInventory()
+                //InventoryRepository.setInventory(InventoryStore.readInventory(this@MainActivity).ingList)
+                //InventoryRepository.setInventory(UserManager.useremail)
           //  }else{
                 //TODO get inventory from api call
            // }
@@ -44,10 +47,10 @@ class MainActivity: ComponentActivity() {
 
     private suspend fun useMockInventory() {
         InventoryStore.writeInventory(this@MainActivity, Inventory(mockItems))
-        InventoryRepository.setInventory(InventoryStore.readInventory(this@MainActivity).ingList)
+        //InventoryRepository.setInventory(InventoryStore.readInventory(this@MainActivity).ingList)
     }
     private suspend fun getInventory() {
-        InventoryRepository.setInventory(InventoryStore.readInventory(this@MainActivity).ingList)
+        //InventoryRepository.setInventory(InventoryStore.readInventory(this@MainActivity).ingList)
     }
 
 

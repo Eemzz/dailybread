@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import com.example.dailybread.compose.MyModalDrawer
 import com.example.dailybread.compose.MyTopAppBar
 import com.example.dailybread.data.*
@@ -67,7 +68,7 @@ fun RecipeListScreen(
                     Text(text = "Could not generate a recipe with your current inventory", color = Color.DarkGray)
                 }
             }else{
-                LazyColumn {
+                LazyColumn (Modifier.align(Alignment.Center)) {
                     item() {
                         recipes.forEach {
                             Card(
@@ -86,7 +87,7 @@ fun RecipeListScreen(
                             ) {
                                 Column(
                                     modifier = Modifier.padding(16.dp),
-                                    horizontalAlignment = CenterHorizontally
+                                    //horizontalAlignment = CenterHorizontally
                                 ) {
                                     Text(it.name, color = Color.DarkGray, fontSize = 20.sp)
 
