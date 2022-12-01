@@ -119,60 +119,7 @@ fun AccountScreen(openDrawer: () -> Unit){
                 }
             }
             if (openDialog.value) {
-                ChangePasswordDialog(openDialog = openDialog)
-                /*val NewCategoryTextState = remember { mutableStateOf(TextFieldValue()) }
-                Card(
-                    Modifier
-                        .align(Alignment.Center)
-                        .fillMaxSize()
-                        .alpha(0.7f), backgroundColor = Color.White,
-                    elevation =
-                    0.dp
-                ) {}
-                Card(
-                    Modifier
-                        .align(Alignment.Center)
-                        .padding(20.dp, 10.dp),
-
-                    backgroundColor = Color.White,
-                    shape = RoundedCornerShape
-                        (5),
-                    elevation = 4.dp
-                ) {
-
-                    Column(Modifier.padding(16.dp), horizontalAlignment = CenterHorizontally) {
-                        Text(text = "Change Password", color = Color.DarkGray, fontSize = 20.sp)
-                        DBTextField(
-
-                            "Current Password",
-                            KeyboardOptions(
-                                autoCorrect = false,
-                                keyboardType = KeyboardType.Text,
-                                imeAction = ImeAction.Next
-                            ),
-                            NewCategoryTextState
-                        )
-                        DBTextField(
-
-                            "New Password",
-                            KeyboardOptions(
-                                autoCorrect = false,
-                                keyboardType = KeyboardType.Text,
-                                imeAction = ImeAction.Done
-                            ),
-                            NewCategoryTextState
-                        )
-                        if(openDialog.value){
-                            ChangePasswordDialog(openDialog = openDialog)
-                        }
-
-
-
-                    }
-
-
-                }*/
-
+                 ChangePasswordDialog(openDialog = openDialog)
 
             }
         }

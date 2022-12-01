@@ -51,7 +51,7 @@ fun RecipeListScreen(
     val openDialog = remember { mutableStateOf(false) }
 
     Scaffold(topBar = {
-        MyTopAppBar(title = "Recipe",
+        MyTopAppBar(title = "Recipes",
             buttonIcon = Icons.Filled.Menu,
             onButtonClicked = { openDrawer() })
     }) {

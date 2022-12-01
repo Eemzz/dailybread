@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -108,7 +109,7 @@ fun DisplayRecipe(openDialog: MutableState<Boolean>, recipe: Recipe){
 }
 
 @Composable
-fun ChangePasswordDialog(openDialog: MutableState<Boolean>){
+fun ChangePasswordDialog(openDialog: MutableState<Boolean>) {
     val oldPasswordTextState = remember { mutableStateOf(TextFieldValue()) }
     val newPasswordTextState = remember { mutableStateOf(TextFieldValue()) }
     val scope = rememberCoroutineScope()
@@ -138,7 +139,8 @@ fun ChangePasswordDialog(openDialog: MutableState<Boolean>){
                             keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Next
                         ),
-                        oldPasswordTextState
+                        oldPasswordTextState,
+                        visualTransformation = PasswordVisualTransformation()
                     )
                     DBTextField(
 
@@ -148,7 +150,8 @@ fun ChangePasswordDialog(openDialog: MutableState<Boolean>){
                             keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Done
                         ),
-                        newPasswordTextState
+                        newPasswordTextState,
+                        visualTransformation = PasswordVisualTransformation()
                     )
 
                     LazyColumn(
@@ -162,7 +165,7 @@ fun ChangePasswordDialog(openDialog: MutableState<Boolean>){
                         if (!changed.value) {
                             println("current changed value: " + changed.value)
                             Text(
-                                text = "Old password is incorrect.",
+                                text = "Current password is incorrect.",
                                 color = Color.Red,
                                 fontSize = 15.sp,
                             )
@@ -225,6 +228,7 @@ fun ChangePasswordDialog(openDialog: MutableState<Boolean>){
 
         },
     )
+
 }
 
 @Composable
@@ -815,7 +819,7 @@ fun ErrorMessageDialog(openDialog: MutableState<Boolean>, message: String) {
                     .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = message, color
+                    text = "Error", color
                     = Color.DarkGray, fontSize = 20.sp
                 )
             }

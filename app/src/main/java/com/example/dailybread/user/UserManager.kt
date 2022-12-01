@@ -75,11 +75,11 @@ object UserManager {
     }
 
     fun getUserEmail(): String {
-        return username
+        return useremail
     }
 
     fun getUserName(): String {
-        return useremail
+        return username
     }
     fun logout(context: Context) {
         username = ""

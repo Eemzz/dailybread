@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.dailybread.R
 import com.example.dailybread.user.User
@@ -55,6 +57,8 @@ fun SignUpScreen(navController: NavController) {
     val load = remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val registered =  remember { mutableStateOf(false) }
+    val notMatch =  remember { mutableStateOf(false) }
+    val badPW =  remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -89,7 +93,7 @@ fun SignUpScreen(navController: NavController) {
                                 .align(Alignment.CenterHorizontally)
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Column(Modifier.padding(20.dp)) {
+                                Column(Modifier.padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 10.dp)) {
                                     DBTextField(
                                         "Enter Your Name",
                                         KeyboardOptions(
@@ -115,20 +119,32 @@ fun SignUpScreen(navController: NavController) {
                                             keyboardType = KeyboardType.Password,
                                             imeAction = ImeAction.Next
                                         ),
-                                        confirmTextState,
+                                        passwordTextState,
                                         visualTransformation = PasswordVisualTransformation()
                                     )
+                                    Text(text = "Must contain at least 8 characters, a capital letter, a number, & a special character"
+                                            ,
+                                        fontSize = 10.sp,
+                                        color = Color.Blue,
+                                        modifier = Modifier.padding(top = 10.dp))
                                     DBTextField(
                                         "Re-enter Your Password",
                                         KeyboardOptions(
                                             autoCorrect = false,
                                             keyboardType = KeyboardType.Password,
-                                            imeAction = ImeAction.Next
+                                            imeAction = ImeAction.Done
                                         ),
-                                        passwordTextState,
+                                        confirmTextState,
                                         visualTransformation = PasswordVisualTransformation()
                                     )
 
+                                    if(badPW.value){
+                                        Text(text = "Password is too weak.", color = Color.Red)
+                                    }
+                                    if(notMatch.value){
+                                        Text(text = "Passwords do not match", color = Color.Red)
+                                        //notMatch.value = !notMatch.value
+                                    }
 
                                 }
                                 Column(
@@ -139,9 +155,13 @@ fun SignUpScreen(navController: NavController) {
                                     DBButton(
                                         btnText = "Register"
                                     ) {
-
+                                        badPW.value = false
+                                        notMatch.value = false
                                         println("email entered: " + emailTextState.value.text)
-                                        if (passwordTextState.value.text == confirmTextState.value.text)
+                                        if(!passwordTextState.value.text.contains("[A-Za-z0-9!\"#$%&'()*+,-./:;\\\\<=>?@\\[\\]^_`{|}~]".toRegex())
+                                            || passwordTextState.value.text.length < 8){
+                                            badPW.value = true;
+                                        }else if (passwordTextState.value.text == confirmTextState.value.text && !badPW.value)
                                         {
                                             scope.launch(Dispatchers.Main) {
                                                 load.value=true
@@ -159,31 +179,20 @@ fun SignUpScreen(navController: NavController) {
                                                     openDialog.value = !openDialog.value
                                                 }
                                             }
-                                            /*println("after coroutin: " + registered.value.toString())
-                                            if (registered.value)
-                                            {
-                                                navController.navigate("home")
-                                            }*/
-                                            /*if (UserManager.createUser(
-                                                    nameTextState.value.text,
-                                                    emailTextState.value.text,
-                                                    passwordTextState.value.text))
-                                            {
-                                                UserManager.isUserLoggedIn = true
-                                                navController.navigate("home")
-                                            }
-                                            else{
-                                                println("open dialog")
-                                                openDialog.value = !openDialog.value
-                                            }*/
 
 
+
+                                        }else{
+                                            notMatch.value = true
                                         }
+                                       
 
                                         //var user = UserManager.createuser(UserManager.userInfo)
                                         //UserManager.createuser(UserManager.userInfo)
 
                                     }
+
+
                                 }
 
 
@@ -200,6 +209,7 @@ fun SignUpScreen(navController: NavController) {
 
             }
         }
+
         if(load.value){
             Loading()
         }
