@@ -40,25 +40,36 @@ object InventoryRepository {
             toAdd.removeAll(toAdd)
         }
 
-        if (!toEdit.isEmpty())
+        /*if (!toEdit.isEmpty())
         {
             for (i in 0 until toEdit.size)
             {
                 editIngredient(toEdit.get(i).get(0), toEdit.get(i).get(1), toEdit.get(i).get(2), email)
             }
             toEdit.removeAll(toEdit)
-        }
+        }*/
 
         if (!toAdd.isEmpty())
         {
+            println("add list: " + toAdd)
             for (i in 0 until toAdd.size)
             {
                 addIngredient(toAdd.get(i).get(0), toAdd.get(i).get(1), toAdd.get(i).get(2), email)
             }
             toAdd.removeAll(toAdd)
         }
+        if (!toEdit.isEmpty())
+        {
+            println("edit list: " + toEdit)
+            for (i in 0 until toEdit.size)
+            {
+                editIngredient(toEdit.get(i).get(0), toEdit.get(i).get(1), toEdit.get(i).get(2), email)
+            }
+            toEdit.removeAll(toEdit)
+        }
         if (!toRemove.isEmpty())
         {
+            println("delete list: " + toRemove)
             for (j in 0 until toRemove.size)
             {
                 deleteIngredient(toRemove.get(j))
@@ -67,6 +78,7 @@ object InventoryRepository {
         }
         if (!catToRemove.isEmpty())
         {
+            println("cat delete list: " + catToRemove)
             for (k in 0 until catToRemove.size)
             {
                 removeCategory(catToRemove.get(k))
@@ -75,6 +87,7 @@ object InventoryRepository {
         }
         if (!catToAdd.isEmpty())
         {
+            println("cat add list: " + catToAdd)
             for (l in 0 until catToAdd.size)
             {
                 addCategory(catToAdd.get(l))
@@ -146,8 +159,16 @@ object InventoryRepository {
     }
 
     fun getIngredientsString(): String {
-        println("ingredients for recipe: " + inventory.flatMap { it.items }.joinToString())
-        return inventory.flatMap { it.items }.joinToString()
+        println("ingredients for recipe: " + inventory.flatMap { it.items })//.joinToString())
+        var ingString = ""
+        val ings = inventory.flatMap { it. items }
+        for (i in 0 until ings.size)
+        {
+            ingString += ings.get(i).name + ", "
+        }
+        println("ingredient string for recipe: "+ ingString)
+        //return inventory.flatMap { it.items }.joinToString()
+        return ingString
     }
 
     suspend fun checkIngredient(category: Category, ingredient: Ingredient): Boolean {
@@ -166,12 +187,13 @@ object InventoryRepository {
             toAdd.add(addThis)
 
             added.value = true
+            category.items.add(ingredient)
         }
         else {
             added.value = false
         }
 
-        return category.items.add(ingredient)
+        return added.value
     }
 
     suspend fun addIngredient(category: String, item: String, quantity: String, email: String): Boolean {
