@@ -81,7 +81,7 @@ fun HomeScreen(navController: NavController,
                     .rotate(180f),
                 contentScale = ContentScale.FillBounds
             )
-            LazyColumn(contentPadding = PaddingValues(16.dp)) {
+            LazyColumn(contentPadding = PaddingValues(16.dp), modifier = Modifier.align(Alignment.Center)) {
 
                 item {
 
